@@ -1,65 +1,194 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import logoDark from '@/public/kymaLight.png'
+
+import { checkoutSchema } from "@/lib/checkoutSchema";
+
+import Step1 from "@/components/step1";
+import Step2 from "@/components/step2";
+import Step3 from "@/components/step3";
+
+const STORAGE_KEY = "checkout_v1";
+
+export default function CheckoutPage() {
+  const [step, setStep] = useState(1);
+  const containerRef = useRef(null);
+
+  const totalSteps = 3;
+  const progress = (step / totalSteps) * 100;
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    trigger,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(checkoutSchema),
+  });
+
+  // 🔹 Load localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+
+      if (parsed.formData) reset(parsed.formData);
+      if (parsed.step) setStep(parsed.step);
+    }
+  }, [reset]);
+
+  // 🔹 Save localStorage
+  const watchedData = watch();
+
+  useEffect(() => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        formData: watchedData,
+        step,
+      })
+    );
+  }, [watchedData, step]);
+
+  // 🔹 Scroll automático
+  useEffect(() => {
+    containerRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [step]);
+
+  const nextStep = async (fields) => {
+    const isValid = await trigger(fields);
+    if (isValid) setStep((prev) => prev + 1);
+  };
+
+  const prevStep = () => setStep((prev) => prev - 1);
+
+  const onSubmit = (data) => {
+    console.log(data);
+    localStorage.removeItem(STORAGE_KEY);
+    alert("Finalizado!");
+  };
+
+  // 🔹 Animação base
+  const variants = {
+    initial: { opacity: 0, x: 40 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -40 },
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen flex items-center bg-white dark:bg-black text-black dark:text-white p-2 md:p-0 md:pt-5 md:pb-5">
+      {/* MOBILE HEADER */}
+      <div className="md:hidden fixed top-0 left-0 w-full bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 py-3 z-50">
+        <Image src={logoDark} className='w-1/5' alt='Logo' />
+        <div className="text-center font-semibold">Mochileiros 2.0</div>
+        <div className="w-10" />
+      </div>
+
+      <div className="pt-16 md:pt-0 mx-auto w-full">
+        <div className="flex flex-col md:flex-row gap-6">
+
+          {/* LEFT SIDE */}
+          <div className="hidden md:flex md:w-[30%] bg-gray-100 dark:bg-gray-900 rounded-2xl p-6 flex-col justify-center items-center text-center shadow-lg">
+            <Image src={logoDark} alt='Logo' />
+            <h1 className="text-2xl font-semibold">Mochileiros 2.0</h1>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Evento exclusivo para exploradores modernos.
+            </p>
+          </div>
+          <form
+            ref={containerRef}
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-full max-w-md md:p-6 bg-gray-900 rounded-2xl shadow-lg overflow-hidden"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {/* 🔥 Barra de progresso */}
+            <div className="mb-6">
+              <div className="w-full h-2 bg-gray-500 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gray-700"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.4 }}
+                />
+              </div>
+
+              <p className="text-xs text-gray-50 mt-2">
+                {Math.round(progress)}% concluído
+              </p>
+            </div>
+
+            {/* 🔥 Steps animados */}
+            <AnimatePresence mode="wait">
+              {step === 1 && (
+                <motion.div
+                  key="step1"
+                  variants={variants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.3 }}
+                >
+                  <Step1
+                    register={register}
+                    setValue={setValue}
+                    watch={watch}
+                    errors={errors}
+                    nextStep={() => nextStep(["nome", 'cpf'])}
+                  />
+                </motion.div>
+              )}
+
+              {step === 2 && (
+                <motion.div
+                  key="step2"
+                  variants={variants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.3 }}
+                >
+                  <Step2
+                    register={register}
+                    errors={errors}
+                    watch={watch}
+                    setValue={setValue}
+                    nextStep={() => nextStep(["email", 'telefone'])}
+                    prevStep={prevStep}
+                  />
+                </motion.div>
+              )}
+
+              {step === 3 && (
+                <motion.div
+                  key="step3"
+                  variants={variants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.3 }}
+                >
+                  <Step3
+                    register={register}
+                    errors={errors}
+                    prevStep={prevStep}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </form>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
