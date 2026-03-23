@@ -49,18 +49,6 @@ export default function Step1({ register, setValue, errors, nextStep, watch }) {
                 </p>
             )}
 
-            <input
-                {...register("Nome do resposavel")}
-                placeholder="Nome do Responsavel"
-                className="w-full p-2 mb-2 rounded bg-gray-700"
-            />
-
-            {errors.nome && (
-                <p className="text-red-400 text-sm mb-2">
-                    {errors.nome.message}
-                </p>
-            )}
-
             <button
                 type="button"
                 disabled={!isValid}

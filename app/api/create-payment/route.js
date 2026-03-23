@@ -31,16 +31,11 @@ export async function POST(req) {
     try {
         const body = await req.json();
 
-        console.log(body)
-
         const data = schema.parse(body);
 
-        const idempotencyKey = uuidv4();
 
         const newPayment = await payment.create({
-            body:
-                data,
-            idempotencyKey,
+            body: data
         });
 
         return Response.json({
