@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "npx prisma generate",
     "dev": "next dev",
-    "build": "npx prisma generate && next build",
+    "build": "echo 'Generating Prisma...' && npx prisma generate && echo 'Prisma OK' && next build",
     "start": "next start",
     "lint": "eslint"
   },
