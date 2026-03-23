@@ -6,7 +6,7 @@ export default function Step1({ register, setValue, errors, nextStep, watch }) {
     const cpf = watch("cpf");
     const responsiblenName = watch('Nome do resposavel')
 
-    const isValid = nome && responsiblenName && cpf.length === 14;
+    const isValid = nome && cpf.length === 14;
 
     return (
         <div>
