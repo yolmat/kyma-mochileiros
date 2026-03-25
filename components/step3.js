@@ -5,6 +5,7 @@ import { useState } from "react";
 import { initMercadoPago } from '@mercadopago/sdk-react'
 import PaymentStatus from './payment'
 import { v4 as uuidv4 } from "uuid";
+import validationClient from '@/app/features/validations';
 
 const idempotencyKey = uuidv4();
 
@@ -17,10 +18,12 @@ export default function MochileirosCheckout({ prevStep }) {
 
     const [dataPayment, setDataPayment] = useState(null);
     const [methodPayment, setMethodPayment] = useState(null);
+    const [validation, setValidaton] = useState(false)
 
     const initialization = {
         amount: valueTicket,
     };
+
     const customization = {
         paymentMethods: {
             bankTransfer: "all",
@@ -32,7 +35,6 @@ export default function MochileirosCheckout({ prevStep }) {
         { selectedPaymentMethod, formData }
     ) => {
         // callback chamado ao clicar no botão de submissão dos dados
-
         const dataLocalStorage = localStorage.getItem('checkout_v1')
         const userObj = JSON.parse(dataLocalStorage).formData
 
@@ -41,6 +43,13 @@ export default function MochileirosCheckout({ prevStep }) {
 
         const firstName = separetor.at(0)
         const lastName = words.at(-1);
+
+        const validationClientExist = await validationClient(userObj.cpf)
+
+        if (validationClientExist === true) {
+            setValidaton(true)
+            return validation
+        }
 
         const payloader = {
             transaction_amount: valueTicket,
@@ -132,7 +141,7 @@ export default function MochileirosCheckout({ prevStep }) {
     return (
         <div className="flex flex-col gap-2">
             <div className='w-full'>
-                {(!dataPayment && !methodPayment) && (
+                {(!dataPayment && !methodPayment && !validation) && (
                     <>
                         <Payment
                             initialization={initialization}
@@ -194,6 +203,9 @@ export default function MochileirosCheckout({ prevStep }) {
                     />
                 )}
 
+                {validation && (
+                    <h1>Usuario já criado</h1>
+                )}
             </div>
         </div>
     );
