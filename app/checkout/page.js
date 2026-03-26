@@ -148,43 +148,28 @@ export default function CheckoutPage() {
     });
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-6">
-            <div className="w-full max-w-6xl bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden flex">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4 md:p-6">
+            <div className="w-full max-w-6xl bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
 
                 {/* LEFT */}
-                <div className="w-1/3 bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8 flex flex-col items-center justify-between text-center">
+                <div className="w-full md:w-1/3 bg-gradient-to-b from-gray-900 to-gray-800 text-white p-6 md:p-8 flex flex-col items-center justify-between text-center">
 
                     {/* TOP */}
                     <div className="flex flex-col items-center gap-6 w-full">
-
-                        {/* LOGO + TEXTO */}
                         <div className="flex items-center gap-3">
-                            <Image
-                                src={kymaDark}
-                                alt="Logo Kyma"
-                                className="h-8 w-auto object-contain"
-                            />
-                            <h1 className="text-2xl font-bold leading-none">
-                                Kyma
-                            </h1>
+                            <Image src={kymaDark} alt="Logo Kyma" className="h-8 w-auto" />
+                            <h1 className="text-2xl font-bold">Kyma</h1>
                         </div>
 
                         {/* BANNER */}
                         <Image
                             src={MochileirosBanner}
-                            alt="banner oficial Mochileiros 2.0"
-                            className="
-                                rounded-2xl
-                                shadow-xl
-                                shadow-black/30
-                                object-cover
-                            "
+                            alt="banner"
+                            className="rounded-2xl shadow-xl shadow-black/30 w-full max-h-52 md:max-h-none object-cover"
                         />
 
                         {/* TÍTULO */}
-                        <h2 className="text-lg font-medium">
-                            Passaporte Mochileiros
-                        </h2>
+                        <h2 className="text-lg">Passaporte Mochileiros</h2>
                     </div>
 
                     {/* BOTTOM */}
@@ -197,7 +182,7 @@ export default function CheckoutPage() {
 
                 </div>
                 {/* RIGHT */}
-                <div className="w-2/3 p-10">
+                <div className="w-full md:w-2/3 p-6 md:p-10">
                     <AnimatePresence>
                         {status ? (
                             <motion.div className="text-center">
@@ -215,11 +200,11 @@ export default function CheckoutPage() {
                                 </div>
 
                                 {/* Steps */}
-                                <div className="flex gap-4 mb-8">
+                                <div className="flex flex-wrap gap-2 md:gap-4 mb-6">
                                     {[1, 2, 3, 4].map((s) => (
                                         <div
                                             key={s}
-                                            className={`px-4 py-2 rounded-full text-sm ${step === s
+                                            className={`px-3 md:px-4 py-2 rounded-full text-xs md:text-sm${step === s
                                                 ? "bg-blue-600 text-white"
                                                 : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
                                                 }`}
@@ -386,7 +371,7 @@ export default function CheckoutPage() {
 
                                     <div className="flex justify-between mt-6">
                                         {step > 1 && (
-                                            <button type="button" onClick={prevStep} className="px-6 py-3 bg-gray-300 rounded-xl">
+                                            <button type="button" onClick={prevStep} className="w-full md:w-auto px-6 py-3 bg-gray-300 rounded-xl">
                                                 Voltar
                                             </button>
                                         )}
@@ -396,7 +381,7 @@ export default function CheckoutPage() {
                                                 type="button"
                                                 onClick={nextStep}
                                                 disabled={!isStepValid}
-                                                className="ml-auto px-6 py-3 bg-blue-600 text-white rounded-xl disabled:opacity-50"
+                                                className="w-full md:w-auto ml-auto px-6 py-3 bg-blue-600 text-white rounded-xl"
                                             >
                                                 Continuar
                                             </button>
