@@ -1,13 +1,10 @@
-const mercadopago = require('mercadopago');
+export const runtime = "nodejs";
+
 import { MercadoPagoConfig, Payment } from "mercadopago";
-import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
-const publicToken = process.env.NEXT_PUBLIC_ACCESS_TOKEN_TESTE
 
-const client = new MercadoPagoConfig({ accessToken: publicToken, options: { timeout: 5000 } });
-
-const payment = new Payment(client);
+const publicToken = process.env.ACCESS_TOKEN_TESTE
 
 const schema = z.object({
     transaction_amount: z.number(),
@@ -33,9 +30,15 @@ export async function POST(req) {
 
         const data = schema.parse(body);
 
+        const client = new MercadoPagoConfig({ accessToken: publicToken, options: { timeout: 10000 } });
+
+        const payment = new Payment(client);
 
         const newPayment = await payment.create({
-            body: data
+            body: data,
+            requestOptions: {
+                idempotencyKey: body.external_reference,
+            },
         });
 
         return Response.json({

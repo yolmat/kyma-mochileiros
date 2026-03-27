@@ -8,41 +8,16 @@ import { fullSchema } from "../features/schemaInputs";
 import Image from "next/image";
 import MochileirosBanner from '@/public/MochileirosBanner.png'
 import kymaDark from '@/public/kymaLight.png'
-import { Payment } from "mercadopago";
+import Steap1 from "./components/step1";
+import { createInputStyle } from "@/app/features/createInputStyle";
+import Steap2 from "./components/step2";
+import Steap3 from "./components/step3";
+
 
 // =========================
 // Utils
 // =========================
-const maskCPF = (value) => {
-    const cleaned = value
-        .replace(/\D/g, "")
-        .slice(0, 11); // 🔒 limita ANTES
 
-    return cleaned
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-};
-
-const maskPhone = (value) => {
-    return value
-        .replace(/\D/g, "")
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{5})(\d)/, "$1-$2")
-        .slice(0, 15);
-};
-
-const maskRG = (value) => {
-    const cleaned = value
-        .replace(/[^0-9Xx]/g, "")
-        .toUpperCase()
-        .slice(0, 9);
-
-    return cleaned
-        .replace(/^(\d{2})(\d)/, "$1.$2")
-        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-        .replace(/\.(\d{3})(\d|X)$/, ".$1-$2");
-};
 
 export default function CheckoutPage() {
     const [step, setStep] = useState(1);
@@ -70,11 +45,14 @@ export default function CheckoutPage() {
     const totalSteps = 4;
     const progress = ((step - 1) / (totalSteps - 1)) * 100;
 
+    const inputStyle = createInputStyle(errors)
+
+
     // =========================
     // Persistência
     // =========================
     useEffect(() => {
-        const saved = localStorage.getItem("checkout");
+        const saved = localStorage.getItem("checkout_v2");
         const savedStep = localStorage.getItem("checkout_step");
 
         if (saved) reset(JSON.parse(saved));
@@ -83,7 +61,7 @@ export default function CheckoutPage() {
 
     useEffect(() => {
         const sub = watch((value) => {
-            localStorage.setItem("checkout", JSON.stringify(value));
+            localStorage.setItem("checkout_v2", JSON.stringify(value));
         });
         return () => sub.unsubscribe();
     }, [watch]);
@@ -120,25 +98,6 @@ export default function CheckoutPage() {
 
     const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
-    const onSubmit = async (data) => {
-        try {
-            await new Promise((res) => setTimeout(res, 1000));
-            setStatus("success");
-        } catch {
-            setStatus("error");
-        }
-    };
-
-    const inputStyle = (field) =>
-        `w-full p-3 rounded-xl border transition-all outline-none 
-    ${errors[field]
-            ? "border-red-500 focus:ring-2 focus:ring-red-300"
-            : "border-gray-300 focus:ring-2 focus:ring-blue-300"
-        }
-    bg-white text-black
-    dark:bg-gray-700 dark:text-white dark:border-gray-600
-  `;
-
     // =========================
     // Validação em tempo real
     // =========================
@@ -165,7 +124,7 @@ export default function CheckoutPage() {
                         <Image
                             src={MochileirosBanner}
                             alt="banner"
-                            className="rounded-2xl shadow-xl shadow-black/30 w-full max-h-52 md:max-h-none object-cover"
+                            className="rounded-2xl shadow-xl shadow-black/30 w-full max-h-55 md:max-h-none object-cover"
                         />
 
                         {/* TÍTULO */}
@@ -185,9 +144,85 @@ export default function CheckoutPage() {
                 <div className="w-full md:w-2/3 p-6 md:p-10">
                     <AnimatePresence>
                         {status ? (
-                            <motion.div className="text-center">
-                                <div className="text-4xl text-green-500">✓</div>
-                                <p>Pagamento aprovado</p>
+                            <motion.div className="flex justify-center w-full">
+                                <div className="w-full max-w-md h-full bg-white rounded-2xl shadow-md overflow-hidden">
+
+                                    {/* Header */}
+                                    {status === 'approved' && (
+                                        <div className="bg-green-600 h-20 relative flex items-center justify-center">
+                                            <div className="absolute -bottom-8 bg-green-600 w-16 h-16 rounded-full flex items-center justify-center border-4 border-white">
+                                                <span className="text-white text-2xl">✓</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {status === 'in_process' && (
+                                        <div className="bg-orange-500 h-20 relative flex items-center justify-center">
+                                            <div className="absolute -bottom-8 bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center border-4 border-white">
+                                                <span className="text-white text-2xl">!</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {status === 'rejected' && (
+                                        <div className="bg-red-600 h-20 relative flex items-center justify-center">
+                                            <div className="absolute -bottom-8 bg-red-600 w-16 h-16 rounded-full flex items-center justify-center border-4 border-white">
+                                                <span className="text-white text-2xl">X</span>
+                                            </div>
+                                        </div>
+                                    )}
+
+
+                                    {/* Content */}
+                                    <div className="pt-12 pb-6 px-6 text-center">
+                                        <h2 className="text-lg font-semibold text-gray-800 mb-6">
+                                            <h2 className="text-lg font-semibold text-gray-800 mb-6">
+                                                Seu pagamento {
+                                                    status === "approved"
+                                                        ? "foi aprovado"
+                                                        : status === "in_process"
+                                                            ? "esta em processamento"
+                                                            : "foi recusado"
+                                                }
+                                            </h2>
+                                        </h2>
+
+                                        {/* Card 1 */}
+                                        <div className="flex items-center gap-4 border rounded-xl p-4 mb-4">
+                                            <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
+                                                💳
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="font-semibold text-gray-800">R$ 250,00</p>
+                                                <p className="text-sm text-gray-500">
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Card 2 */}
+                                        <div className="flex items-center gap-4 border rounded-xl p-4 mb-4">
+                                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                                🔒
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="font-semibold text-gray-800">Passaporte Mochileiros</p>
+                                                <p className="text-sm text-gray-500">
+                                                    Kyma Store
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Card 3 */}
+                                        <div className="flex items-center gap-4 border rounded-xl p-4 mb-6">
+                                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                                🧾
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="font-semibold text-gray-800">
+                                                    Operação
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </motion.div>
                         ) : (
                             <>
@@ -200,7 +235,7 @@ export default function CheckoutPage() {
                                 </div>
 
                                 {/* Steps */}
-                                <div className="flex flex-wrap gap-2 md:gap-4 mb-6">
+                                <div className="flex flex-wrap justify-center md:justify-start gap-2 md:gap-4 mb-6">
                                     {[1, 2, 3, 4].map((s) => (
                                         <div
                                             key={s}
@@ -217,178 +252,40 @@ export default function CheckoutPage() {
                                     ))}
                                 </div>
 
-                                <form onSubmit={handleSubmit(onSubmit)}>
+                                <form>
                                     <AnimatePresence mode="wait">
 
                                         {step === 1 && (
-                                            <motion.div key="step1" className="space-y-4">
-                                                <div>
-                                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                        Nome completo:
-                                                    </label>
-                                                    <input {...register("name")} name="name" placeholder="Bruna Rodrigues Ferreira" className={inputStyle("name")} />
-                                                    {errors.name && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, y: -5 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            exit={{ opacity: 0 }}
-                                                            className="
-                                                            flex items-center gap-2 mt-2 px-3 py-2
-                                                            rounded-lg
-                                                            bg-red-500/10
-                                                            text-red-500 text-sm"
-                                                        >
-                                                            <span className="text-red-500">⚠</span>
-                                                            <span>{errors.name.message}</span>
-                                                        </motion.div>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                        CPF:
-                                                    </label>
-                                                    <input
-                                                        {...register("cpf")}
-                                                        name="cpf"
-                                                        placeholder="000.000.000-00"
-                                                        onChange={(e) =>
-                                                            setValue("cpf", maskCPF(e.target.value), { shouldValidate: true })
-                                                        }
-                                                        className={inputStyle("cpf")}
-                                                    />
-                                                    {errors.cpf && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, y: -5 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            exit={{ opacity: 0 }}
-                                                            className="
-                                                            flex items-center gap-2 mt-2 px-3 py-2
-                                                            rounded-lg
-                                                            bg-red-500/10
-                                                            text-red-500 text-sm"
-                                                        >
-                                                            <span className="text-red-500">⚠</span>
-                                                            <span>{errors.cpf.message}</span>
-                                                        </motion.div>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                        RG:
-                                                    </label>
-                                                    <input
-                                                        {...register("rg")}
-                                                        placeholder="00.000.000-0"
-                                                        onChange={(e) => {
-                                                            const formatted = maskRG(e.target.value);
-                                                            setValue("rg", formatted, { shouldValidate: true });
-                                                        }}
-                                                        className={inputStyle("rg")}
-                                                    />
-                                                    {errors.rg && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, y: -5 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            exit={{ opacity: 0 }}
-                                                            className="
-                                                            flex items-center gap-2 mt-2 px-3 py-2
-                                                            rounded-lg
-                                                            bg-red-500/10
-                                                            text-red-500 text-sm"
-                                                        >
-                                                            <span className="text-red-500">⚠</span>
-                                                            <span>{errors.rg.message}</span>
-                                                        </motion.div>
-                                                    )}
-                                                </div>
-                                            </motion.div>
+                                            <Steap1
+                                                register={register}
+                                                setValue={setValue}
+                                                watch={watch}
+                                                errors={errors}
+                                                nextStep={nextStep}
+                                            />
                                         )}
 
                                         {step === 2 && (
-                                            <motion.div key="step2" className="space-y-4">
-                                                <div>
-                                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                        Email:
-                                                    </label>
-
-                                                    <input {...register("email")} name="email" placeholder="exemplo@dominio.com.br" className={inputStyle("email")} />
-                                                    {errors.email && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, y: -5 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            exit={{ opacity: 0 }}
-                                                            className="
-                                                            flex items-center gap-2 mt-2 px-3 py-2
-                                                            rounded-lg
-                                                            bg-red-500/10
-                                                            text-red-500 text-sm"
-                                                        >
-                                                            <span className="text-red-500">⚠</span>
-                                                            <span>{errors.email.message}</span>
-                                                        </motion.div>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                        Celular:
-                                                    </label>
-
-                                                    <input
-                                                        {...register("phone")}
-                                                        placeholder="(00) 00000-00"
-                                                        onChange={(e) => {
-                                                            const formatted = maskPhone(e.target.value);
-                                                            setValue("phone", formatted, { shouldValidate: true });
-                                                        }}
-                                                        className={inputStyle("phone")}
-                                                    />
-                                                    {errors.phone && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, y: -5 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            exit={{ opacity: 0 }}
-                                                            className="
-                                                            flex items-center gap-2 mt-2 px-3 py-2
-                                                            rounded-lg
-                                                            bg-red-500/10
-                                                            text-red-500 text-sm"
-                                                        >
-                                                            <span className="text-red-500">⚠</span>
-                                                            <span>{errors.phone.message}</span>
-                                                        </motion.div>
-                                                    )}
-                                                </div>
-                                            </motion.div>
+                                            <Steap2
+                                                register={register}
+                                                setValue={setValue}
+                                                watch={watch}
+                                                errors={errors}
+                                                nextStep={nextStep}
+                                                prevStep={prevStep}
+                                            />
                                         )}
 
                                         {step === 3 && (
                                             <motion.div key="step3" className="space-y-4">
-
+                                                <Steap3
+                                                    prevStep={prevStep}
+                                                    setStatus={setStatus}
+                                                />
                                             </motion.div>
                                         )}
 
                                     </AnimatePresence>
-
-                                    <div className="flex justify-between mt-6">
-                                        {step > 1 && (
-                                            <button type="button" onClick={prevStep} className="w-full md:w-auto px-6 py-3 bg-gray-300 rounded-xl">
-                                                Voltar
-                                            </button>
-                                        )}
-
-                                        {step < 3 ? (
-                                            <button
-                                                type="button"
-                                                onClick={nextStep}
-                                                disabled={!isStepValid}
-                                                className="w-full md:w-auto ml-auto px-6 py-3 bg-blue-600 text-white rounded-xl"
-                                            >
-                                                Continuar
-                                            </button>
-                                        ) : (
-                                            <></>
-                                        )}
-                                    </div>
                                 </form>
                             </>
                         )}

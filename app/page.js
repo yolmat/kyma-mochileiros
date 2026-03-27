@@ -12,11 +12,12 @@ import { checkoutSchema } from "@/lib/checkoutSchema";
 import Step1 from "@/components/step1";
 import Step2 from "@/components/step2";
 import Step3 from "@/components/step3";
+import { redirect } from "next/navigation";
 
 const STORAGE_KEY = "checkout_v1";
 
 export default function CheckoutPage() {
-  const [step, setStep] = useState(1);
+  /*const [step, setStep] = useState(1);
   const containerRef = useRef(null);
 
   const totalSteps = 3;
@@ -89,8 +90,8 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen flex items-center bg-white dark:bg-black text-black dark:text-white p-2 md:p-0 md:pt-5 md:pb-5">
-      {/* MOBILE HEADER */}
-      <div className="md:hidden fixed top-0 left-0 w-full bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 py-3 z-50">
+      {/* MOBILE HEADER }
+      /*<div className="md:hidden fixed top-0 left-0 w-full bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 py-3 z-50">
         <Image src={logoDark} className='w-1/5' alt='Logo' />
         <div className="text-center font-semibold">Mochileiros 2.0</div>
         <div className="w-10" />
@@ -99,7 +100,7 @@ export default function CheckoutPage() {
       <div className="pt-16 md:pt-0 mx-auto w-full">
         <div className="flex flex-col md:flex-row gap-6">
 
-          {/* LEFT SIDE */}
+          {/* LEFT SIDE }/*
           <div className="hidden md:flex md:w-[30%] bg-gray-100 dark:bg-gray-900 rounded-2xl p-6 flex-col justify-center items-center text-center shadow-lg">
             <Image src={logoDark} alt='Logo' />
             <h1 className="text-2xl font-semibold">Mochileiros 2.0</h1>
@@ -112,7 +113,7 @@ export default function CheckoutPage() {
             onSubmit={handleSubmit(onSubmit)}
             className="w-full max-w-md md:p-6 bg-gray-900 rounded-2xl shadow-lg overflow-hidden"
           >
-            {/* 🔥 Barra de progresso */}
+            {/* 🔥 Barra de progresso }/*
             <div className="mb-6">
               <div className="w-full h-2 bg-gray-500 rounded-full overflow-hidden">
                 <motion.div
@@ -128,7 +129,7 @@ export default function CheckoutPage() {
               </p>
             </div>
 
-            {/* 🔥 Steps animados */}
+            {/* 🔥 Steps animados }/*
             <AnimatePresence mode="wait">
               {step === 1 && (
                 <motion.div
@@ -190,5 +191,7 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
-  );
+  );*/
+
+  redirect('/checkout')
 }
