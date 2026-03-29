@@ -101,8 +101,10 @@ export default function Steap3({ prevStep, setStatus, setStep }) {
                 return methodPayment;
             }
 
-            //setStep((prev) => prev + 1)
-            return setStatus(data.status);
+            setStatus(ticketBody)
+
+            setStep((prev) => prev + 1)
+            return;
 
         } catch (e) {
             console.error(e);

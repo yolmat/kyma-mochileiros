@@ -12,6 +12,7 @@ import Steap1 from "./components/step1";
 import { createInputStyle } from "@/app/features/createInputStyle";
 import Steap2 from "./components/step2";
 import Steap3 from "./components/step3";
+import Steap4 from "./components/step4";
 
 
 // =========================
@@ -143,153 +144,77 @@ export default function CheckoutPage() {
                 {/* RIGHT */}
                 <div className="w-full md:w-2/3 p-6 md:p-10">
                     <AnimatePresence>
-                        {status ? (
-                            <motion.div className="flex justify-center w-full">
-                                <div className="w-full max-w-md h-full bg-white rounded-2xl shadow-md overflow-hidden">
+                        <>
+                            {/* Progress */}
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mb-6 overflow-hidden">
+                                <motion.div
+                                    className="h-full bg-blue-600"
+                                    animate={{ width: `${progress}%` }}
+                                />
+                            </div>
 
-                                    {/* Header */}
-                                    {status === 'approved' && (
-                                        <div className="bg-green-600 h-20 relative flex items-center justify-center">
-                                            <div className="absolute -bottom-8 bg-green-600 w-16 h-16 rounded-full flex items-center justify-center border-4 border-white">
-                                                <span className="text-white text-2xl">✓</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {status === 'in_process' && (
-                                        <div className="bg-orange-500 h-20 relative flex items-center justify-center">
-                                            <div className="absolute -bottom-8 bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center border-4 border-white">
-                                                <span className="text-white text-2xl">!</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {status === 'rejected' && (
-                                        <div className="bg-red-600 h-20 relative flex items-center justify-center">
-                                            <div className="absolute -bottom-8 bg-red-600 w-16 h-16 rounded-full flex items-center justify-center border-4 border-white">
-                                                <span className="text-white text-2xl">X</span>
-                                            </div>
-                                        </div>
-                                    )}
-
-
-                                    {/* Content */}
-                                    <div className="pt-12 pb-6 px-6 text-center">
-                                        <h2 className="text-lg font-semibold text-gray-800 mb-6">
-                                            <h2 className="text-lg font-semibold text-gray-800 mb-6">
-                                                Seu pagamento {
-                                                    status === "approved"
-                                                        ? "foi aprovado"
-                                                        : status === "in_process"
-                                                            ? "esta em processamento"
-                                                            : "foi recusado"
-                                                }
-                                            </h2>
-                                        </h2>
-
-                                        {/* Card 1 */}
-                                        <div className="flex items-center gap-4 border rounded-xl p-4 mb-4">
-                                            <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
-                                                💳
-                                            </div>
-                                            <div className="text-left">
-                                                <p className="font-semibold text-gray-800">R$ 250,00</p>
-                                                <p className="text-sm text-gray-500">
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Card 2 */}
-                                        <div className="flex items-center gap-4 border rounded-xl p-4 mb-4">
-                                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                                                🔒
-                                            </div>
-                                            <div className="text-left">
-                                                <p className="font-semibold text-gray-800">Passaporte Mochileiros</p>
-                                                <p className="text-sm text-gray-500">
-                                                    Kyma Store
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Card 3 */}
-                                        <div className="flex items-center gap-4 border rounded-xl p-4 mb-6">
-                                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                                                🧾
-                                            </div>
-                                            <div className="text-left">
-                                                <p className="font-semibold text-gray-800">
-                                                    Operação
-                                                </p>
-                                            </div>
-                                        </div>
+                            {/* Steps */}
+                            <div className="flex flex-wrap justify-center md:justify-start gap-2 md:gap-4 mb-6">
+                                {[1, 2, 3, 4].map((s) => (
+                                    <div
+                                        key={s}
+                                        className={`px-3 md:px-4 py-2 rounded-full text-xs md:text-sm${step === s
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                                            }`}
+                                    >
+                                        {s === 1 && "Dados Pessoais"}
+                                        {s === 2 && "Contato"}
+                                        {s === 3 && "Pagamento"}
+                                        {s === 4 && "Concluido"}
                                     </div>
-                                </div>
-                            </motion.div>
-                        ) : (
-                            <>
-                                {/* Progress */}
-                                <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full mb-6 overflow-hidden">
-                                    <motion.div
-                                        className="h-full bg-blue-600"
-                                        animate={{ width: `${progress}%` }}
-                                    />
-                                </div>
+                                ))}
+                            </div>
 
-                                {/* Steps */}
-                                <div className="flex flex-wrap justify-center md:justify-start gap-2 md:gap-4 mb-6">
-                                    {[1, 2, 3, 4].map((s) => (
-                                        <div
-                                            key={s}
-                                            className={`px-3 md:px-4 py-2 rounded-full text-xs md:text-sm${step === s
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-                                                }`}
-                                        >
-                                            {s === 1 && "Dados Pessoais"}
-                                            {s === 2 && "Contato"}
-                                            {s === 3 && "Pagamento"}
-                                            {s === 4 && "Concluido"}
-                                        </div>
-                                    ))}
-                                </div>
+                            <form>
+                                <AnimatePresence mode="wait">
 
-                                <form>
-                                    <AnimatePresence mode="wait">
+                                    {step === 1 && (
+                                        <Steap1
+                                            register={register}
+                                            setValue={setValue}
+                                            watch={watch}
+                                            errors={errors}
+                                            nextStep={nextStep}
+                                        />
+                                    )}
 
-                                        {step === 1 && (
-                                            <Steap1
-                                                register={register}
-                                                setValue={setValue}
-                                                watch={watch}
-                                                errors={errors}
-                                                nextStep={nextStep}
-                                            />
-                                        )}
+                                    {step === 2 && (
+                                        <Steap2
+                                            register={register}
+                                            setValue={setValue}
+                                            watch={watch}
+                                            errors={errors}
+                                            nextStep={nextStep}
+                                            prevStep={prevStep}
+                                        />
+                                    )}
 
-                                        {step === 2 && (
-                                            <Steap2
-                                                register={register}
-                                                setValue={setValue}
-                                                watch={watch}
-                                                errors={errors}
-                                                nextStep={nextStep}
+                                    {step === 3 && (
+                                        <motion.div key="step3" className="space-y-4">
+                                            <Steap3
                                                 prevStep={prevStep}
+                                                setStatus={setStatus}
+                                                setStep={setStep}
                                             />
-                                        )}
-
-                                        {step === 3 && (
-                                            <motion.div key="step3" className="space-y-4">
-                                                <Steap3
-                                                    prevStep={prevStep}
-                                                    setStatus={setStatus}
-                                                    setStep={setStep}
-                                                />
-                                            </motion.div>
-                                        )}
-
-                                    </AnimatePresence>
-                                </form>
-                            </>
-                        )}
+                                        </motion.div>
+                                    )}
+                                    {step === 4 && (
+                                        <motion.div key="step4" className="space-y-4">
+                                            <Steap4
+                                                status={status}
+                                                setStep={setStep}
+                                            />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </form>
+                        </>
                     </AnimatePresence>
                 </div>
             </div>
