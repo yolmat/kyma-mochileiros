@@ -24,6 +24,8 @@ export default function CheckoutPage() {
     const [step, setStep] = useState(1);
     const [status, setStatus] = useState(null);
 
+    const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
+
     const stepFields = {
         1: ["name", "cpf", "rg"],
         2: ["email", "phone"],
@@ -136,7 +138,7 @@ export default function CheckoutPage() {
                     <div className="text-center">
                         <p>Valor:</p>
                         <h3 className="text-3xl font-bold">
-                            R$ 250,00
+                            R$ {valueTicket},00
                         </h3>
                     </div>
 
