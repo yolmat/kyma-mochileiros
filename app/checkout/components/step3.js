@@ -4,6 +4,7 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { initialization, customization, onReady, onError } from '@/app/features/configPayment';
 import Button from './button';
+import Link from 'next/link';
 
 const publicKey = process.env.NEXT_PUBLIC_KEY_TESTE
 const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
@@ -155,16 +156,28 @@ export default function Steap3({ prevStep, setStatus, setStep }) {
                         />
 
                         {/* Botão copiar */}
-                        <button
-                            type={'button'}
-                            onClick={handleCopy}
-                            className="
-                                    mt-3 w-full py-3 rounded-xl
+                        <div className='flex gap-5'>
+                            <button
+                                type={'button'}
+                                onClick={handleCopy}
+                                className="
+                                     w-full py-3 rounded-xl
                                     bg-blue-600 text-white font-medium
                                     hover:bg-blue-700 transition"
-                        >
-                            {copied ? "Copiado ✓" : "Copiar código PIX"}
-                        </button>
+                            >
+                                {copied ? "Copiado ✓" : "Copiar código PIX"}
+                            </button>
+                            <Link href="/ticket">
+                                <Button
+                                    type={'button'}
+                                    onClick={prevStep}
+                                    extraClass={'opacity-100 cursor-pointer hover:opacity-90 active:opacity-80'}
+                                >
+                                    Verificar pagamento
+                                </Button>
+
+                            </Link>
+                        </div>
                     </div>
                 </div>
             )}
