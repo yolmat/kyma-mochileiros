@@ -83,7 +83,7 @@ export default function Steap2(
                     </motion.div>
                 )}
             </div>
-            <div className="flex justify-around gap-3">
+            <div className="flex justify-between gap-3">
                 <Button
                     type={'button'}
                     onClick={prevStep}

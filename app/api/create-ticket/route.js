@@ -16,7 +16,6 @@ export async function POST(req) {
                 payment_method_id: body.payment_method_id,
                 id_payment: body.payment.id,
                 status_payment: body.payment.status
-
             }
         })
 

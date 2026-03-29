@@ -47,7 +47,6 @@ export default function CheckoutPage() {
 
     const inputStyle = createInputStyle(errors)
 
-
     // =========================
     // Persistência
     // =========================
@@ -281,6 +280,7 @@ export default function CheckoutPage() {
                                                 <Steap3
                                                     prevStep={prevStep}
                                                     setStatus={setStatus}
+                                                    setStep={setStep}
                                                 />
                                             </motion.div>
                                         )}

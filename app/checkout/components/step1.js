@@ -127,14 +127,16 @@ export default function Steap1({
                     </motion.div>
                 )}
             </div>
-            <Button
-                type={'button'}
-                onClick={nextStep}
-                disabled={isStepValid ? true : false}
-                extraClass={isStepValid ? 'opacity-100  cursor-pointer hover:opacity-90 active:opacity-80' : 'opacity-50 cursor-not-allowed'}
-            >
-                {isStepValid ? 'Continuar' : 'Preencha os Dados'}
-            </Button>
+            <div className="flex justify-end">
+                <Button
+                    type={'button'}
+                    onClick={nextStep}
+                    disabled={isStepValid ? true : false}
+                    extraClass={isStepValid ? 'opacity-100  cursor-pointer hover:opacity-90 active:opacity-80' : 'opacity-50 cursor-not-allowed'}
+                >
+                    {isStepValid ? 'Continuar' : 'Preencha os Dados'}
+                </Button>
+            </div>
         </motion.div>
     );
 }

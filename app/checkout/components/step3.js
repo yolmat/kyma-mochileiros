@@ -10,7 +10,7 @@ const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
 
 initMercadoPago(publicKey)
 
-export default function Steap3({ prevStep, setStatus }) {
+export default function Steap3({ prevStep, setStatus, setStep }) {
     // =========================
     // Mercado Pago Submit
     // =========================
@@ -48,9 +48,9 @@ export default function Steap3({ prevStep, setStatus }) {
                 }
             },
             ticket: {
-                name: dataUser.nome,
+                name: dataUser.name,
                 email: dataUser.email,
-                phone: dataUser.telefone,
+                phone: dataUser.phone,
                 document: dataUser.cpf,
             },
             items: [
@@ -85,8 +85,6 @@ export default function Steap3({ prevStep, setStatus }) {
 
             if (data?.id) {
 
-                console.log('criar usuario')
-
                 await fetch('api/create-ticket', {
                     method: 'POST',
                     headers: {
@@ -102,8 +100,7 @@ export default function Steap3({ prevStep, setStatus }) {
                 return console.log(data);
             }
 
-
-
+            setStep((prev) => prev + 1)
             return setStatus(data.status);
 
         } catch (e) {
