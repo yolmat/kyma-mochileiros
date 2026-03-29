@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from 'next/font/local'
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,11 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <nav className="text-center">
+          <Link href="https://api.whatsapp.com/send?phone=5511986619079&text=Ol%C3%A1%2C%0AEstou%20com%20duvida%20quanto%20ao%20Mochileiros%202.0" target="_blank">
+            <p>Suporte</p>
+          </Link>
+        </nav>
       </body>
     </html>
   );
