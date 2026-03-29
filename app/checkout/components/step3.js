@@ -16,7 +16,6 @@ export default function Steap3({ prevStep, setStatus, setStep }) {
     // Mercado Pago Submit
     // =========================
 
-    const [dataPayment, setDataPayment] = useState(null);
     const [methodPayment, setMethodPayment] = useState(null);
     const [copied, setCopied] = useState(false);
 
@@ -102,7 +101,7 @@ export default function Steap3({ prevStep, setStatus, setStep }) {
                 return methodPayment;
             }
 
-            setStep((prev) => prev + 1)
+            //setStep((prev) => prev + 1)
             return setStatus(data.status);
 
         } catch (e) {

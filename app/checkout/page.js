@@ -27,6 +27,7 @@ export default function CheckoutPage() {
         1: ["name", "cpf", "rg"],
         2: ["email", "phone"],
         3: [],
+        4: [],
     };
 
     const {
