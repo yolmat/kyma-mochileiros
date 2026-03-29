@@ -17,6 +17,7 @@ export default function Steap3({ prevStep, setStatus, setStep }) {
 
     const [dataPayment, setDataPayment] = useState(null);
     const [methodPayment, setMethodPayment] = useState(null);
+    const [copied, setCopied] = useState(false);
 
     const onSubmit = async ({ selectedPaymentMethod, formData }) => {
 
@@ -95,9 +96,9 @@ export default function Steap3({ prevStep, setStatus, setStep }) {
             }
 
             if (formData.payment_method_id === "pix") {
-                setDataPayment(data);
+                setMethodPayment(data);
 
-                return console.log(data);
+                return methodPayment;
             }
 
             setStep((prev) => prev + 1)
@@ -108,15 +109,73 @@ export default function Steap3({ prevStep, setStatus, setStep }) {
         }
     }
 
+    const handleCopy = async (e) => {
+
+        e.preventDefault();
+
+        try {
+            await navigator.clipboard.writeText(methodPayment.qr_code);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch {
+            setCopied(false);
+        }
+    };
+
     return (
         <>
-            <Payment
-                initialization={initialization}
-                customization={customization}
-                onSubmit={onSubmit}
-                onReady={onReady}
-                onError={onError}
-            />
+            {methodPayment && (
+                <div className="flex flex-col items-center text-center gap-6">
+
+                    {/* Título */}
+                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                        Pagamento via PIX
+                    </h2>
+
+                    {/* QR Code */}
+                    <div className="p-4 bg-white rounded-2xl shadow-lg shadow-black/20">
+                        <img
+                            src={`data:image/png;base64,${methodPayment.qr_code_base64}`}
+                            alt="QR Code PIX"
+                            className="w-52 h-52 object-contain"
+                        />
+                    </div>
+
+                    {/* Código PIX */}
+                    <div className="w-full">
+                        <textarea
+                            readOnly
+                            value={methodPayment.qr_code}
+                            className="
+                                        w-full p-3 rounded-xl border text-sm resize-none
+                                        bg-gray-50 dark:bg-gray-700
+                                        text-gray-800 dark:text-white
+                                        border-gray-300 dark:border-gray-600"
+                            rows={4}
+                        />
+
+                        {/* Botão copiar */}
+                        <button
+                            type={'button'}
+                            onClick={handleCopy}
+                            className="
+                                    mt-3 w-full py-3 rounded-xl
+                                    bg-blue-600 text-white font-medium
+                                    hover:bg-blue-700 transition"
+                        >
+                            {copied ? "Copiado ✓" : "Copiar código PIX"}
+                        </button>
+                    </div>
+                </div>
+            )}
+            {!methodPayment && (
+                <Payment
+                    initialization={initialization}
+                    customization={customization}
+                    onSubmit={onSubmit}
+                    onReady={onReady}
+                    onError={onError}
+                />)}
             <Button
                 type={'button'}
                 onClick={prevStep}
