@@ -1,197 +1,362 @@
-"use client";
+'use client'
 
-import { useState, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import logoDark from '@/public/kymaLight.png'
+import { useState, useEffect } from "react"
+import MochileirosBanner from '@/public/MochileirosBanner.png'
+import Link from "next/link"
+import kymaDark from '@/public/kymaLight.png'
+import Image from "next/image"
 
-import { checkoutSchema } from "@/lib/checkoutSchema";
-
-import Step1 from "@/components/step1";
-import Step2 from "@/components/step2";
-import Step3 from "@/components/step3";
-import { redirect } from "next/navigation";
-
-const STORAGE_KEY = "checkout_v1";
-
-export default function CheckoutPage() {
-  /*const [step, setStep] = useState(1);
-  const containerRef = useRef(null);
-
-  const totalSteps = 3;
-  const progress = (step / totalSteps) * 100;
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    trigger,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(checkoutSchema),
-  });
-
-  // 🔹 Load localStorage
-  useEffect(() => {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-
-    if (savedData) {
-      const parsed = JSON.parse(savedData);
-
-      if (parsed.formData) reset(parsed.formData);
-      if (parsed.step) setStep(parsed.step);
-    }
-  }, [reset]);
-
-  // 🔹 Save localStorage
-  const watchedData = watch();
-
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        formData: watchedData,
-        step,
-      })
-    );
-  }, [watchedData, step]);
-
-  // 🔹 Scroll automático
-  useEffect(() => {
-    containerRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, [step]);
-
-  const nextStep = async (fields) => {
-    const isValid = await trigger(fields);
-    if (isValid) setStep((prev) => prev + 1);
-  };
-
-  const prevStep = () => setStep((prev) => prev - 1);
-
-  const onSubmit = (data) => {
-    console.log(data);
-    localStorage.removeItem(STORAGE_KEY);
-    alert("Finalizado!");
-  };
-
-  // 🔹 Animação base
-  const variants = {
-    initial: { opacity: 0, x: 40 },
-    animate: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -40 },
-  };
+export default function MochileirosLandingPage() {
+  const eventDate = new Date('2026-08-28T18:00:00').getTime()
 
   return (
-    <div className="min-h-screen flex items-center bg-white dark:bg-black text-black dark:text-white p-2 md:p-0 md:pt-5 md:pb-5">
-      {/* MOBILE HEADER }
-      /*<div className="md:hidden fixed top-0 left-0 w-full bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 py-3 z-50">
-        <Image src={logoDark} className='w-1/5' alt='Logo' />
-        <div className="text-center font-semibold">Mochileiros 2.0</div>
-        <div className="w-10" />
-      </div>
+    <div className="bg-[#0D0D0D] text-white min-h-screen scroll-smooth">
+      <Countdown eventDate={eventDate} />
+    </div>
+  )
+}
 
-      <div className="pt-16 md:pt-0 mx-auto w-full">
-        <div className="flex flex-col md:flex-row gap-6">
+function Countdown({ eventDate }) {
+  const [timeLeft, setTimeLeft] = useState({
+    days: '00',
+    hours: '00',
+    minutes: '00',
+    seconds: '00',
+  })
 
-          {/* LEFT SIDE }/*
-          <div className="hidden md:flex md:w-[30%] bg-gray-100 dark:bg-gray-900 rounded-2xl p-6 flex-col justify-center items-center text-center shadow-lg">
-            <Image src={logoDark} alt='Logo' />
-            <h1 className="text-2xl font-semibold">Mochileiros 2.0</h1>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Evento exclusivo para exploradores modernos.
-            </p>
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date().getTime()
+      const distance = eventDate - now
+
+      if (distance <= 0) {
+        setTimeLeft({
+          days: '00',
+          hours: '00',
+          minutes: '00',
+          seconds: '00',
+        })
+        return
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+
+      setTimeLeft({
+        days: String(days).padStart(2, '0'),
+        hours: String(hours).padStart(2, '0'),
+        minutes: String(minutes).padStart(2, '0'),
+        seconds: String(seconds).padStart(2, '0'),
+      })
+    }
+
+    updateCountdown()
+
+    const interval = setInterval(updateCountdown, 1000)
+
+    return () => clearInterval(interval)
+  }, [eventDate])
+
+  return (
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#0D0D0D]/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <Image src={kymaDark} alt="Logo Kyma" className="h-8 w-auto" />
+            <div>
+              <p className="text-lg font-bold">Kyma</p>
+              <p className="text-xs text-[#8A8A8A]">Mochileiros 2.0</p>
+            </div>
           </div>
-          <form
-            ref={containerRef}
-            onSubmit={handleSubmit(onSubmit)}
-            className="w-full max-w-md md:p-6 bg-gray-900 rounded-2xl shadow-lg overflow-hidden"
-          >
-            {/* 🔥 Barra de progresso }/*
-            <div className="mb-6">
-              <div className="w-full h-2 bg-gray-500 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gray-700"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.4 }}
-                />
-              </div>
 
-              <p className="text-xs text-gray-50 mt-2">
-                {Math.round(progress)}% concluído
+          <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
+            <a href="#sobre" className="text-[#CFCFCF] transition hover:text-[#FF7A18]">
+              Sobre
+            </a>
+            <a href="#programacao" className="text-[#CFCFCF] transition hover:text-[#FF7A18]">
+              Programação
+            </a>
+            <a href="#inscricao" className="text-[#CFCFCF] transition hover:text-[#FF7A18]">
+              Inscrição
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <section
+          className="relative flex min-h-screen items-center overflow-hidden bg-cover bg-center px-6"
+          style={{
+            backgroundImage: `linear-gradient(rgba(13,13,13,0.45), rgba(13,13,13,0.65)), url(${MochileirosBanner.src})`,
+          }}
+        >
+          <div className="mx-auto grid max-w-7xl gap-14 pt-28 lg:grid-cols-2 lg:items-center">
+            <div>
+              <span className="mb-6 inline-flex rounded-full border border-[#2EC4B6]/30 bg-[#2EC4B6]/10 px-4 py-2 text-sm font-medium text-[#2EC4B6]">
+                Kyma • Agosto de 2026
+              </span>
+
+              <h1 className="max-w-2xl text-5xl font-black leading-tight md:text-7xl">
+                Mochileiros <span className="text-[#FF7A18]">2.0</span>
+              </h1>
+
+              <p className="mt-6 max-w-xl text-lg leading-8 text-[#CFCFCF]">
+                28 de agosto de 2026 até 02 de agosto de 2026
               </p>
+
+              <div className="mt-10 flex flex-wrap gap-4">
+                <a
+                  href="#inscricao"
+                  className="rounded-2xl bg-[#FF7A18] px-8 py-4 text-base font-bold text-white transition hover:bg-[#F4A261]"
+                >
+                  Compre seu passaporte
+                </a>
+
+                <a
+                  href="#sobre"
+                  className="rounded-2xl border border-white/15 bg-white/5 px-8 py-4 text-base font-semibold text-[#CFCFCF] transition hover:border-[#2EC4B6] hover:text-[#2EC4B6]"
+                >
+                  Saiba Mais
+                </a>
+              </div>
             </div>
 
-            {/* 🔥 Steps animados }/*
-            <AnimatePresence mode="wait">
-              {step === 1 && (
-                <motion.div
-                  key="step1"
-                  variants={variants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.3 }}
-                >
-                  <Step1
-                    register={register}
-                    setValue={setValue}
-                    watch={watch}
-                    errors={errors}
-                    nextStep={() => nextStep(["nome", 'cpf'])}
-                  />
-                </motion.div>
-              )}
+            <div className="rounded-[2rem] border border-white/10 bg-[#1A1A1A]/90 p-8 shadow-2xl backdrop-blur-xl">
+              <p className="mb-6 text-center text-sm font-semibold uppercase tracking-[0.3em] text-[#8A8A8A]">
+                Contagem Regressiva
+              </p>
 
-              {step === 2 && (
-                <motion.div
-                  key="step2"
-                  variants={variants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.3 }}
-                >
-                  <Step2
-                    register={register}
-                    errors={errors}
-                    watch={watch}
-                    setValue={setValue}
-                    nextStep={() => nextStep(["email", 'telefone'])}
-                    prevStep={prevStep}
-                  />
-                </motion.div>
-              )}
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <CountdownCard value={timeLeft.days} />
+                <CountdownCard value={timeLeft.hours} />
+                <CountdownCard value={timeLeft.minutes} />
+                <CountdownCard value={timeLeft.seconds} />
+              </div>
+            </div>
+          </div>
+        </section>
 
-              {step === 3 && (
-                <motion.div
-                  key="step3"
-                  variants={variants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.3 }}
-                >
-                  <Step3
-                    register={register}
-                    errors={errors}
-                    prevStep={prevStep}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </form>
+        <section id="sobre" className="bg-[#1A1A1A] px-6 py-28">
+          <div className="mx-auto max-w-5xl rounded-[2rem] border border-white/10 bg-[#0D0D0D] p-10 shadow-2xl md:p-16">
+            <div className="mb-12">
+              <span className="text-sm font-semibold uppercase tracking-[0.3em] text-[#2EC4B6]">
+                Sobre o Evento
+              </span>
+              <h2 className="mt-4 text-4xl font-black md:text-5xl">
+                PREPARADOS?
+              </h2>
+            </div>
+
+            <div className="space-y-8 text-lg leading-9 text-[#CFCFCF]">
+              <p className="text-2xl font-bold text-[#FF7A18]">
+                1 FOI BOM. 2 SERÁ DEMAIS!
+              </p>
+
+              <p>Ele foi pedido e desejado por muitos.</p>
+
+              <p className="text-2xl font-bold text-white">
+                MOCHILEIROS 2.0 VAI ACONTECER!
+              </p>
+
+              <blockquote className="rounded-2xl border-l-4 border-[#FF7A18] bg-[#1A1A1A] p-6 italic text-white">
+                "Deus abençoou o sétimo dia e o declarou santo, pois foi o dia em que ele descansou de toda a sua obra de criação." Gênesis 2:3
+              </blockquote>
+
+              <p>
+                Quando falamos que Deus descansou, não dizemos que Ele parou para relaxar, mas que Ele agora contemplava tudo o que havia feito e enchia a Terra com sua glória.
+              </p>
+
+              <p>
+                Passaremos alguns dias em família, isolados em um sítio, contemplando tudo aquilo que Deus fez e nos enchendo de sua presença.
+              </p>
+
+              <p>
+                Prepare sua mochila, seu sapato, sua bíblia e sua cruz e venha se esvaziar do mundo e se encher do Glória de Deus.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="programacao" className="bg-[#0D0D0D] px-6 py-28">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-12 text-center">
+              <span className="text-sm font-semibold uppercase tracking-[0.3em] text-[#2EC4B6]">
+                Programação
+              </span>
+              <h2 className="mt-4 text-4xl font-black md:text-5xl">
+                Agenda do Mochileiros 2.0
+              </h2>
+            </div>
+
+            <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#1A1A1A] shadow-2xl">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[700px] border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-[#2A2A2A] text-left">
+                      <th className="px-8 py-6 text-sm font-bold uppercase tracking-wider text-[#FF7A18]">
+                        Horário
+                      </th>
+                      <th className="px-8 py-6 text-sm font-bold uppercase tracking-wider text-[#FF7A18]">
+                        Atividade
+                      </th>
+                      <th className="px-8 py-6 text-sm font-bold uppercase tracking-wider text-[#FF7A18]">
+                        Descrição
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr className="border-b border-white/5 transition hover:bg-white/5">
+                      <td className="px-8 py-7 font-bold text-white">19:30h</td>
+                      <td className="px-8 py-7 text-[#2EC4B6] font-semibold">Saída</td>
+                      <td className="px-8 py-7 leading-7 text-[#CFCFCF]">
+                        O ônibus sairá da igreja às 20h30. <br />
+                        <span className="font-semibold text-[#E63946]">
+                          ATENÇÃO: Não será permitido ida ao sítio em carro particular.
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="inscricao" className="bg-[#1A1A1A] px-6 py-28">
+          <div className="mx-auto max-w-6xl text-center">
+            <span className="text-sm font-semibold uppercase tracking-[0.3em] text-[#2EC4B6]">
+              Inscrição
+            </span>
+            <h2 className="mt-4 text-4xl font-black md:text-5xl">
+              Escolha Seu Lote
+            </h2>
+
+            <div className="mt-16 grid gap-8 lg:grid-cols-3">
+              <LotCard
+                title="1º Lote"
+                date="31 de maio"
+                price="R$ 250,00"
+                spots="15 vagas"
+                featured
+              />
+
+              <LotCard
+                title="2º Lote"
+                date="05 de julho"
+                price="R$ 300,00"
+                spots="25 vagas"
+                blurred
+              />
+
+              <LotCard
+                title="3º Lote"
+                date="15 de agosto"
+                price="R$ 350,00"
+                spots="10 vagas"
+                blurred
+              />
+            </div>
+
+            <Link
+              href="/checkout"
+              className="mt-14 inline-flex rounded-2xl bg-[#FF7A18] px-10 py-5 text-lg font-bold text-white transition hover:bg-[#F4A261]"
+            >
+              Compre seu passaporte
+            </Link>
+          </div>
+        </section>
+
+        <section className="bg-[#0D0D0D] px-6 py-24">
+          <div className="mx-auto max-w-4xl rounded-[2rem] border border-white/10 bg-[#1A1A1A] p-12 text-center shadow-2xl">
+            <span className="text-sm font-semibold uppercase tracking-[0.3em] text-[#2EC4B6]">
+              Redes
+            </span>
+
+            <h2 className="mt-4 text-4xl font-black">
+              Acompanhe a Kyma
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-[#CFCFCF]">
+              Fique por dentro de novidades, avisos e atualizações do evento Mochileiros 2.0.
+            </p>
+
+            <a
+              href="https://www.instagram.com/triakyma/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-10 inline-flex items-center gap-3 rounded-2xl border border-[#FF7A18]/30 bg-[#FF7A18]/10 px-8 py-4 text-lg font-bold text-[#FF7A18] transition hover:bg-[#FF7A18] hover:text-white"
+            >
+              Instagram da Kyma
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-white/10 bg-[#0D0D0D] px-6 py-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-3">
+          <Image src={kymaDark} alt="Logo Kyma" className="h-8 w-auto" />
+          <span className="text-lg font-bold">Kyma</span>
+        </div>
+      </footer>
+    </>
+  )
+}
+
+function CountdownCard({ value, label }) {
+  return (
+    <div className="rounded-3xl border border-white/10 bg-[#0D0D0D] p-6 text-center">
+      <div className="text-4xl font-black text-[#FF7A18] md:text-5xl">{value}</div>
+      <div className="mt-2 text-sm uppercase tracking-[0.3em] text-[#8A8A8A]">{label}</div>
+    </div>
+  )
+}
+
+function LotCard({ title, date, price, spots, featured, blurred }) {
+  return (
+    <div
+      className={`relative overflow-hidden rounded-[2rem] border p-8 text-left shadow-2xl transition ${featured
+        ? 'border-[#FF7A18]/40 bg-[#0D0D0D]'
+        : 'border-white/10 bg-[#0D0D0D]'
+        }`}
+    >
+      {blurred && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#0D0D0D]/30 backdrop-blur-3xl">
+          <span className="rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm font-bold uppercase tracking-[0.3em] text-[#8A8A8A]">
+            Em Breve
+          </span>
+        </div>
+      )}
+
+      <div className={blurred ? 'blur-md' : ''}>
+        <div className="flex items-center justify-between">
+          <h3 className="text-2xl font-black text-white">{title}</h3>
+          {featured && (
+            <span className="rounded-full bg-[#FF7A18]/15 px-4 py-2 text-xs font-bold uppercase tracking-[0.3em] text-[#FF7A18]">
+              Disponível
+            </span>
+          )}
+        </div>
+
+        <div className="mt-8 space-y-6">
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">Término do lote</p>
+            <p className="mt-2 text-xl font-bold text-[#CFCFCF]">{date}</p>
+          </div>
+
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">Valor</p>
+            <p className="mt-2 text-3xl font-black text-[#2EC4B6]">{price}</p>
+          </div>
+
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">Quantidade</p>
+            <p className="mt-2 text-xl font-bold text-[#CFCFCF]">{spots}</p>
+          </div>
         </div>
       </div>
     </div>
-  );*/
-
-  redirect('/checkout')
+  )
 }
