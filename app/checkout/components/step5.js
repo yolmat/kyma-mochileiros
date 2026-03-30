@@ -15,7 +15,7 @@ export default function Steap5({ status, setStep }) {
         <AnimatePresence mode="wait">
             {status && (
                 <motion.div
-                    key={result.status}
+                    key={status.payment.status}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
