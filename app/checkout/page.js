@@ -13,9 +13,7 @@ import { createInputStyle } from "@/app/features/createInputStyle";
 import Steap2 from "./components/step2";
 import Steap3 from "./components/step3";
 import Steap4 from "./components/step4";
-import Link from "next/link";
-import Button from "./components/button";
-
+import Steap5 from "./components/step5";
 
 // =========================
 // Utils
@@ -29,10 +27,11 @@ export default function CheckoutPage() {
     const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
 
     const stepFields = {
-        1: ["name", "cpf", "rg"],
-        2: ["email", "phone"],
+        1: ["name", "cpf", "rg", "email", "phone", 'birth'],
+        2: ['cep', 'street', 'number', 'district', 'city',],
         3: [],
         4: [],
+        5: []
     };
 
     const {
@@ -168,9 +167,10 @@ export default function CheckoutPage() {
                                             }`}
                                     >
                                         {s === 1 && "Dados Pessoais"}
-                                        {s === 2 && "Contato"}
-                                        {s === 3 && "Pagamento"}
-                                        {s === 4 && "Concluido"}
+                                        {s === 2 && "Endereço"}
+                                        {s === 3 && "Adicionais"}
+                                        {s === 4 && "Pagamento"}
+                                        {s === 5 && "Concluido"}
                                     </div>
                                 ))}
                             </div>
@@ -205,12 +205,21 @@ export default function CheckoutPage() {
                                                 prevStep={prevStep}
                                                 setStatus={setStatus}
                                                 setStep={setStep}
+                                                errors={errors}
                                             />
                                         </motion.div>
                                     )}
                                     {step === 4 && (
                                         <motion.div key="step4" className="space-y-4">
                                             <Steap4
+                                                status={status}
+                                                setStep={setStep}
+                                            />
+                                        </motion.div>
+                                    )}
+                                    {step === 5 && (
+                                        <motion.div key="step5" className="space-y-4">
+                                            <Steap5
                                                 status={status}
                                                 setStep={setStep}
                                             />

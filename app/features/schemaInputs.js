@@ -26,13 +26,14 @@ export const fullSchema = z.object({
         .string()
         .transform((v) => v.replace(/[^0-9Xx]/g, "").toUpperCase())
         .refine((v) => v.length >= 8 && v.length <= 9, "RG inválido"),
+    birth: z.string().min(8, 'Data de Nascimento obrigatoria'),
 
     email: z.string().email("E-mail inválido"),
     phone: z.string().min(14, "Telefone inválido"),
 
-    address: z.string().min(5, "Endereço obrigatório"),
+    cep: z.string().min(8, 'CEP obrigatorio'),
+    number: z.string().min(1, 'Numero obrigatorio'),
+    neighborhood: z.string().min(3, 'Bairro obrigatorio'),
+    street: z.string().min(5, "Endereço obrigatório"),
     city: z.string().min(2, "Cidade obrigatória"),
-
-    cardNumber: z.string().min(16, "Cartão inválido"),
-    cardName: z.string().min(3, "Nome obrigatório"),
 });

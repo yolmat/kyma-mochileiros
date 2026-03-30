@@ -1,202 +1,226 @@
-
-import { initMercadoPago, Payment } from '@mercadopago/sdk-react';
+import { motion } from "framer-motion";
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { initialization, customization, onReady, onError } from '@/app/features/configPayment';
-import Button from './button';
-import Link from 'next/link';
+import { createInputStyle } from "@/app/features/createInputStyle";
 
-const publicKey = process.env.NEXT_PUBLIC_KEY_TESTE
-const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
 
-initMercadoPago(publicKey)
+export default function Steap2({ errors }) {
+    const [healthInfo, setHealthInfo] = useState({
+        useMedication: false,
+        medication: "",
 
-export default function Steap3({ prevStep, setStatus, setStep }) {
-    // =========================
-    // Mercado Pago Submit
-    // =========================
+        healthProblem: false,
+        healthProblemDescription: "",
 
-    const [methodPayment, setMethodPayment] = useState(null);
-    const [copied, setCopied] = useState(false);
+        foodRestriction: false,
+        foodRestrictionDescription: "",
+    });
 
-    const onSubmit = async ({ selectedPaymentMethod, formData }) => {
-
-        const idempotencyKey = uuidv4();
-
-        const dataLocalStorage = localStorage.getItem('checkout_v2')
-        const dataUser = JSON.parse(dataLocalStorage)
-
-        const nameUser = dataUser.name
-        const separetor = nameUser.trim().split(/\s+/)
-
-        const firstNameUser = separetor.at(0)
-        const lastNameUser = nameUser.trim().split(/\s+/).at(-1);
-
-        const payloader = {
-            transaction_amount: valueTicket,
-
-            ...formData,
-
-            description: "Ingresso Mochileiros 2.0 - Kyma",
-            payer: {
-                ...formData.payer,
-
-                first_name: firstNameUser,
-                last_name: lastNameUser,
-                identification: {
-                    type: 'CPF',
-                    number: dataUser.cpf.replace(/\D/g, "")
-                }
-            },
-            ticket: {
-                name: dataUser.name,
-                email: dataUser.email,
-                phone: dataUser.phone,
-                document: dataUser.cpf,
-            },
-            items: [
-                {
-                    id: "1",
-                    title: "28/08/2026 | Ingresso Evento mochileiros | Lote 1",
-                    description: "28/08/2026 | Ingresso para o evento mochileiros da Igreja do Evangelho Quadrangular Vila Dionisia e Vila Carolina",
-                    category_id: "Tickets",
-                    quantity: 1,
-                    unit_price: 1,
-                    event_date: "28-08-26-30-08-26T19:00:00.000-13:00",
-                }
-            ],
-            external_reference: idempotencyKey,
-        }
-
-        try {
-            const res = await fetch("/api/create-payment", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payloader),
-            });
-
-            const data = await res.json()
-
-            const ticketBody = {
-                ...payloader,
-                payment: data,
-            }
-
-            if (data?.id) {
-
-                await fetch('api/create-ticket', {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(ticketBody),
-                })
-            }
-
-            if (formData.payment_method_id === "pix") {
-                setMethodPayment(data);
-
-                return methodPayment;
-            }
-
-            setStatus(ticketBody)
-
-            setStep((prev) => prev + 1)
-            return;
-
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    const handleCopy = async (e) => {
-
-        e.preventDefault();
-
-        try {
-            await navigator.clipboard.writeText(methodPayment.qr_code);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        } catch {
-            setCopied(false);
-        }
+    const handleCheckbox = (field) => {
+        setHealthInfo((prev) => ({
+            ...prev,
+            [field]: !prev[field],
+            ...(field === "useMedication" && prev[field]
+                ? { medication: "" }
+                : {}),
+            ...(field === "healthProblem" && prev[field]
+                ? { healthProblemDescription: "" }
+                : {}),
+            ...(field === "foodRestriction" && prev[field]
+                ? { foodRestrictionDescription: "" }
+                : {}),
+        }));
     };
 
+    const inputStyle = createInputStyle(errors)
+
+
     return (
-        <>
-            {methodPayment && (
-                <div className="flex flex-col items-center text-center gap-6">
+        <div className="space-y-6">
+            <div className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+                <div className="flex items-start gap-4">
+                    <input
+                        id="useMedication"
+                        type="checkbox"
+                        checked={healthInfo.useMedication}
+                        onChange={() => handleCheckbox("useMedication")}
+                        className="mt-1 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
 
-                    {/* Título */}
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                        Pagamento via PIX
-                    </h2>
+                    <div className="flex-1">
+                        <label
+                            htmlFor="useMedication"
+                            className="cursor-pointer text-base font-semibold text-gray-900 dark:text-white"
+                        >
+                            Faz uso de algum medicamento?
+                        </label>
 
-                    {/* QR Code */}
-                    <div className="p-4 bg-white rounded-2xl shadow-lg shadow-black/20">
-                        <img
-                            src={`data:image/png;base64,${methodPayment.qr_code_base64}`}
-                            alt="QR Code PIX"
-                            className="w-52 h-52 object-contain"
-                        />
-                    </div>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Marque caso utilize algum medicamento regularmente.
+                        </p>
 
-                    {/* Código PIX */}
-                    <div className="w-full">
-                        <textarea
-                            readOnly
-                            value={methodPayment.qr_code}
-                            className="
-                                        w-full p-3 rounded-xl border text-sm resize-none
-                                        bg-gray-50 dark:bg-gray-700
-                                        text-gray-800 dark:text-white
-                                        border-gray-300 dark:border-gray-600"
-                            rows={4}
-                        />
+                        {healthInfo.useMedication && (
+                            <div className="mt-4">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Se sim, qual?
+                                </label>
 
-                        {/* Botão copiar */}
-                        <div className='flex gap-5'>
-                            <button
-                                type={'button'}
-                                onClick={handleCopy}
-                                className="
-                                     w-full py-3 rounded-xl
-                                    bg-blue-600 text-white font-medium
-                                    hover:bg-blue-700 transition"
-                            >
-                                {copied ? "Copiado ✓" : "Copiar código PIX"}
-                            </button>
-                            <Link href="/ticket">
-                                <Button
-                                    type={'button'}
-                                    onClick={prevStep}
-                                    extraClass={'opacity-100 cursor-pointer hover:opacity-90 active:opacity-80'}
-                                >
-                                    Verificar pagamento
-                                </Button>
+                                <input
+                                    type="text"
+                                    value={healthInfo.medication}
+                                    onChange={(e) =>
+                                        setHealthInfo((prev) => ({
+                                            ...prev,
+                                            medication: e.target.value,
+                                        }))
+                                    }
+                                    placeholder="Ex.: Dipirona, Insulina..."
+                                    className={inputStyle("medication")}
+                                />
 
-                            </Link>
-                        </div>
+                                {!healthInfo.medication.trim() && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0 }}
+                                        className="
+                                                flex items-center gap-2 mt-2 px-3 py-2
+                                                rounded-lg
+                                                bg-red-500/10
+                                                text-red-500 text-sm"
+                                    >
+                                        <span>⚠</span>
+                                        <span>Informe qual medicamento utiliza.</span>
+                                    </motion.div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
-            )}
-            {!methodPayment && (
-                <Payment
-                    initialization={initialization}
-                    customization={customization}
-                    onSubmit={onSubmit}
-                    onReady={onReady}
-                    onError={onError}
-                />)}
-            <Button
-                type={'button'}
-                onClick={prevStep}
-                extraClass={'opacity-100 cursor-pointer hover:opacity-90 active:opacity-80'}
-            >
-                Voltar
-            </Button>
-        </>
+            </div>
+
+            <div className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+                <div className="flex items-start gap-4">
+                    <input
+                        id="healthProblem"
+                        type="checkbox"
+                        checked={healthInfo.healthProblem}
+                        onChange={() => handleCheckbox("healthProblem")}
+                        className="mt-1 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+
+                    <div className="flex-1">
+                        <label
+                            htmlFor="healthProblem"
+                            className="cursor-pointer text-base font-semibold text-gray-900 dark:text-white"
+                        >
+                            Tem algum problema de saúde?
+                        </label>
+
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Informe caso exista alguma condição importante.
+                        </p>
+
+                        {healthInfo.healthProblem && (
+                            <div className="mt-4">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Se sim, qual?
+                                </label>
+
+                                <input
+                                    type="text"
+                                    value={healthInfo.healthProblemDescription}
+                                    onChange={(e) =>
+                                        setHealthInfo((prev) => ({
+                                            ...prev,
+                                            healthProblemDescription: e.target.value,
+                                        }))
+                                    }
+                                    placeholder="Ex.: Asma, Hipertensão..."
+                                    className={inputStyle("healthProblemDescription")}
+                                />
+
+                                {!healthInfo.healthProblemDescription.trim() && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0 }}
+                                        className="
+                                            flex items-center gap-2 mt-2 px-3 py-2
+                                            rounded-lg
+                                            bg-red-500/10
+                                            text-red-500 text-sm"
+                                    >
+                                        <span>⚠</span>
+                                        <span>Informe qual problema de saúde possui.</span>
+                                    </motion.div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <div className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
+                <div className="flex items-start gap-4">
+                    <input
+                        id="foodRestriction"
+                        type="checkbox"
+                        checked={healthInfo.foodRestriction}
+                        onChange={() => handleCheckbox("foodRestriction")}
+                        className="mt-1 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+
+                    <div className="flex-1">
+                        <label
+                            htmlFor="foodRestriction"
+                            className="cursor-pointer text-base font-semibold text-gray-900 dark:text-white"
+                        >
+                            Alguma restrição alimentar?
+                        </label>
+
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Informe caso tenha alguma restrição ou alergia alimentar.
+                        </p>
+
+                        {healthInfo.foodRestriction && (
+                            <div className="mt-4">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Se sim, qual?
+                                </label>
+
+                                <input
+                                    type="text"
+                                    value={healthInfo.foodRestrictionDescription}
+                                    onChange={(e) =>
+                                        setHealthInfo((prev) => ({
+                                            ...prev,
+                                            foodRestrictionDescription: e.target.value,
+                                        }))
+                                    }
+                                    placeholder="Ex.: Lactose, Glúten, Amendoim..."
+                                    className={inputStyle("foodRestrictionDescription")}
+                                />
+
+                                {!healthInfo.foodRestrictionDescription.trim() && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0 }}
+                                        className="
+                                            flex items-center gap-2 mt-2 px-3 py-2
+                                            rounded-lg
+                                            bg-red-500/10
+                                            text-red-500 text-sm"
+                                    >
+                                        <span>⚠</span>
+                                        <span>Informe qual restrição alimentar possui.</span>
+                                    </motion.div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }

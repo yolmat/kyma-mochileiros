@@ -13,8 +13,11 @@ export default function Steap1({
     const name = watch('name')
     const cpf = watch('cpf')
     const rg = watch('rg')
+    const email = watch('email')
+    const phone = watch('phone')
+    const birth = watch('birth')
 
-    const isStepValid = name && cpf.length === 14 && rg.length === 12
+    const isStepValid = name && cpf.length === 14 && rg.length === 12 && email && phone.length >= 15 && birth
 
     const maskRG = (value) => {
         const cleaned = value
@@ -37,6 +40,22 @@ export default function Steap1({
             .replace(/(\d{3})(\d)/, "$1.$2")
             .replace(/(\d{3})(\d)/, "$1.$2")
             .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    };
+
+    const maskPhone = (value) => {
+        return value
+            .replace(/\D/g, "")
+            .replace(/(\d{2})(\d)/, "($1) $2")
+            .replace(/(\d{5})(\d)/, "$1-$2")
+            .slice(0, 15);
+    };
+
+    const maskDate = (value) => {
+        return value
+            .replace(/\D/g, "")
+            .slice(0, 8)
+            .replace(/(\d{2})(\d)/, "$1/$2")
+            .replace(/(\d{2})\/(\d{2})(\d)/, "$1/$2/$3");
     };
 
     const inputStyle = createInputStyle(errors)
@@ -124,6 +143,88 @@ export default function Steap1({
                     >
                         <span className="text-red-500">⚠</span>
                         <span>{errors.rg.message}</span>
+                    </motion.div>
+                )}
+            </div>
+            <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Email:
+                </label>
+
+                <input {...register("email")} name="email" placeholder="exemplo@dominio.com.br" className={inputStyle("email")} />
+                {errors.email && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="
+                            flex items-center gap-2 mt-2 px-3 py-2
+                            rounded-lg
+                            bg-red-500/10
+                            text-red-500 text-sm"
+                    >
+                        <span className="text-red-500">⚠</span>
+                        <span>{errors.email.message}</span>
+                    </motion.div>
+                )}
+            </div>
+            <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Celular:
+                </label>
+
+                <input
+                    {...register("phone")}
+                    placeholder="(00) 00000-0000"
+                    onChange={(e) => {
+                        const formatted = maskPhone(e.target.value);
+                        setValue("phone", formatted, { shouldValidate: true });
+                    }}
+                    className={inputStyle("phone")}
+                />
+                {errors.phone && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="
+                                                            flex items-center gap-2 mt-2 px-3 py-2
+                                                            rounded-lg
+                                                            bg-red-500/10
+                                                            text-red-500 text-sm"
+                    >
+                        <span className="text-red-500">⚠</span>
+                        <span>{errors.phone.message}</span>
+                    </motion.div>
+                )}
+            </div>
+            <div>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Data de Nascimento:
+                </label>
+
+                <input
+                    {...register("birth")}
+                    placeholder="00/00/0000"
+                    onChange={(e) => {
+                        const formatted = maskDate(e.target.value);
+                        setValue("birth", formatted, { shouldValidate: true });
+                    }}
+                    className={inputStyle("birth")}
+                />
+                {errors.birth && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="
+                                flex items-center gap-2 mt-2 px-3 py-2
+                                rounded-lg
+                                bg-red-500/10
+                                text-red-500 text-sm"
+                    >
+                        <span className="text-red-500">⚠</span>
+                        <span>{errors.birth.message}</span>
                     </motion.div>
                 )}
             </div>
