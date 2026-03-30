@@ -9,6 +9,14 @@ import Image from "next/image"
 export default function MochileirosLandingPage() {
   const eventDate = new Date('2026-08-28T18:00:00').getTime()
 
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth'
+
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto'
+    }
+  }, [])
+
   return (
     <div className="bg-[#0D0D0D] text-white min-h-screen scroll-smooth">
       <Countdown eventDate={eventDate} />
@@ -62,7 +70,7 @@ function Countdown({ eventDate }) {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#0D0D0D]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
           <div className="flex items-center gap-3">
             <Image src={kymaDark} alt="Logo Kyma" className="h-8 w-auto" />
             <div>
@@ -71,7 +79,7 @@ function Countdown({ eventDate }) {
             </div>
           </div>
 
-          <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
+          <nav className="flex flex-wrap items-center justify-center gap-4 text-center text-xs font-medium sm:gap-6 sm:text-sm md:justify-end md:gap-8">
             <a href="#sobre" className="text-[#CFCFCF] transition hover:text-[#FF7A18]">
               Sobre
             </a>
@@ -89,29 +97,29 @@ function Countdown({ eventDate }) {
         <section
           className="relative flex min-h-screen items-center overflow-hidden bg-cover bg-center px-6"
           style={{
-            backgroundImage: `linear-gradient(rgba(13,13,13,0.45), rgba(13,13,13,0.65)), url(${MochileirosBanner.src})`,
+            backgroundImage: `linear-gradient(rgba(13,13,13,0.75), rgba(13,13,13,0.88)), url(${MochileirosBanner.src})`,
           }}
         >
-          <div className="mx-auto grid max-w-7xl gap-14 pt-28 lg:grid-cols-2 lg:items-center">
+          <div className="mx-auto grid max-w-7xl gap-12 pt-40 sm:pt-44 lg:grid-cols-2 lg:items-center lg:pt-28">
             <div>
               <span className="mb-6 inline-flex rounded-full border border-[#2EC4B6]/30 bg-[#2EC4B6]/10 px-4 py-2 text-sm font-medium text-[#2EC4B6]">
                 Kyma • Agosto de 2026
               </span>
 
-              <h1 className="max-w-2xl text-5xl font-black leading-tight md:text-7xl">
+              <h1 className="max-w-2xl text-4xl font-black leading-tight sm:text-5xl md:text-7xl">
                 Mochileiros <span className="text-[#FF7A18]">2.0</span>
               </h1>
 
               <p className="mt-6 max-w-xl text-lg leading-8 text-[#CFCFCF]">
-                28 de agosto de 2026 até 02 de agosto de 2026
+                28 de agosto de 2026 até 30 de agosto de 2026
               </p>
 
-              <div className="mt-10 flex flex-wrap gap-4">
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
                 <a
                   href="#inscricao"
                   className="rounded-2xl bg-[#FF7A18] px-8 py-4 text-base font-bold text-white transition hover:bg-[#F4A261]"
                 >
-                  Compre seu passaporte
+                  Faça sua Inscrição
                 </a>
 
                 <a
@@ -134,6 +142,10 @@ function Countdown({ eventDate }) {
                 <CountdownCard value={timeLeft.minutes} />
                 <CountdownCard value={timeLeft.seconds} />
               </div>
+
+              <div className="mt-8 rounded-2xl border border-[#2EC4B6]/20 bg-[#2EC4B6]/10 p-4 text-center text-sm text-[#CFCFCF]">
+                O evento começa em 28/08/2026 às 18:00h
+              </div>
             </div>
           </div>
         </section>
@@ -144,7 +156,7 @@ function Countdown({ eventDate }) {
               <span className="text-sm font-semibold uppercase tracking-[0.3em] text-[#2EC4B6]">
                 Sobre o Evento
               </span>
-              <h2 className="mt-4 text-4xl font-black md:text-5xl">
+              <h2 className="mt-4 text-3xl font-black md:text-5xl">
                 PREPARADOS?
               </h2>
             </div>
@@ -161,7 +173,7 @@ function Countdown({ eventDate }) {
               </p>
 
               <blockquote className="rounded-2xl border-l-4 border-[#FF7A18] bg-[#1A1A1A] p-6 italic text-white">
-                "Deus abençoou o sétimo dia e o declarou santo, pois foi o dia em que ele descansou de toda a sua obra de criação." Gênesis 2:3
+                &ldquo;Deus abençoou o sétimo dia e o declarou santo, pois foi o dia em que ele descansou de toda a sua obra de criação.&rdquo; Gênesis 2:3
               </blockquote>
 
               <p>
@@ -262,9 +274,9 @@ function Countdown({ eventDate }) {
 
             <Link
               href="/checkout"
-              className="mt-14 inline-flex rounded-2xl bg-[#FF7A18] px-10 py-5 text-lg font-bold text-white transition hover:bg-[#F4A261]"
+              className="mt-14 inline-flex w-full items-center justify-center rounded-2xl bg-[#FF7A18] px-10 py-5 text-lg font-bold text-white transition hover:bg-[#F4A261] sm:w-auto"
             >
-              Compre seu passaporte
+              Fazer Inscrição
             </Link>
           </div>
         </section>
@@ -308,7 +320,7 @@ function Countdown({ eventDate }) {
 function CountdownCard({ value, label }) {
   return (
     <div className="rounded-3xl border border-white/10 bg-[#0D0D0D] p-6 text-center">
-      <div className="text-4xl font-black text-[#FF7A18] md:text-5xl">{value}</div>
+      <div className="text-4xl font-black text-[#FF7A18] md:text-4xl">{value}</div>
       <div className="mt-2 text-sm uppercase tracking-[0.3em] text-[#8A8A8A]">{label}</div>
     </div>
   )
