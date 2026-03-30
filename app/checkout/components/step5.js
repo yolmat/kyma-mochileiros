@@ -129,13 +129,6 @@ export default function Steap5({ status, setStep }) {
                                         {status.payment_method_id}
                                     </p>
                                 </div>
-
-                                <div className="md:col-span-2">
-                                    <p className="text-gray-500 dark:text-gray-400">Motivo</p>
-                                    <div className="mt-2 rounded-2xl border border-red-200 dark:border-red-900 bg-white/70 dark:bg-red-950/30 px-4 py-3 text-red-700 dark:text-red-300 font-medium leading-relaxed">
-                                        {result.reason}
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     )}
