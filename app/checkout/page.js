@@ -22,7 +22,7 @@ import Steap5 from "./components/step5";
 
 export default function CheckoutPage() {
     const [step, setStep] = useState(1);
-    const [status, setStatus] = useState(null);
+    const [status, setStatus] = useState("");
 
     const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
 

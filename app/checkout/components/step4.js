@@ -16,6 +16,9 @@ initMercadoPago(publicKey)
 
 export default function Steap4({ prevStep, setStatus, setStep, register, errors, watch, setValue }) {
 
+    const [aataUserPayment, setDataUserPayment] = useState()
+    const [dataCpfPayment, setDataCpfPayment] = useState()
+
     const userPayment = (e) => {
         const nameDataPayment = e.target.value
 
@@ -25,7 +28,7 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
     const cpfPayment = (e) => {
         const cpfDataPayment = e.target.value
 
-        setDataCpfPaymento(cpfDataPayment)
+        setDataCpfPayment(cpfDataPayment)
     }
 
     const maskCPF = (value) => {
