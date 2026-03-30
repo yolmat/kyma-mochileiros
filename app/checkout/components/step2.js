@@ -1,3 +1,5 @@
+'use client'
+
 import { motion } from "framer-motion";
 import { createInputStyle } from "@/app/features/createInputStyle";
 import { useState } from "react";
