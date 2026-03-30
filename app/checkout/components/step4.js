@@ -205,7 +205,6 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                             name="paymentcpf"
                             placeholder="000.000.000-00"
                             onChange={async (e) => {
-                                await cpfPayment(e);
                                 setValue("paymentcpf", maskCPF(e.target.value), { shouldValidate: true })
                             }}
                             className={inputStyle("paymentcpf")}
