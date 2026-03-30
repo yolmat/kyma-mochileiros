@@ -16,11 +16,11 @@ export default function Steap2(
     }
 ) {
 
-    const cep = watch('cep')
-    const street = watch('street')
-    const number = watch('number')
-    const district = watch('sdistricttreet')
-    const city = watch('city')
+    const cep = watch('cep') || ''
+    const street = watch('street') || ''
+    const number = watch('number') || ''
+    const district = watch('district') || ''
+    const city = watch('city') || ''
 
     const isStepValid = cep.length >= 9 && number.length >= 1
 
@@ -86,7 +86,7 @@ export default function Steap2(
 
                 <input
                     {...register("cep")}
-                    placeholder="00000-00"
+                    placeholder="00000-000"
                     onChange={async (e) => {
                         await handleCEPChange(e);
                         const formatted = maskCEP(e.target.value);
@@ -233,10 +233,14 @@ export default function Steap2(
                     Voltar
                 </Button>
                 <Button
-                    type={'button'}
+                    type="button"
                     onClick={nextStep}
-                    disabled={isStepValid ? true : false}
-                    extraClass={isStepValid ? 'opacity-100  cursor-pointer hover:opacity-90 active:opacity-80' : 'opacity-50 cursor-not-allowed'}
+                    disabled={!isStepValid}
+                    extraClass={
+                        isStepValid
+                            ? 'opacity-100 cursor-pointer hover:opacity-90 active:opacity-80'
+                            : 'opacity-50 cursor-not-allowed'
+                    }
                 >
                     {isStepValid ? 'Continuar' : 'Preencha os Dados'}
                 </Button>
