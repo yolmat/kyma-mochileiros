@@ -221,6 +221,7 @@ export default function CheckoutPage() {
                                                 register={register}
                                                 watch={watch}
                                                 errors={errors}
+                                                setStatus={setStatus}
                                             />
                                         </motion.div>
                                     )}

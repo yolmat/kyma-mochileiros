@@ -61,6 +61,9 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
         const firstNameUser = separetor.at(0)
         const lastNameUser = nameUser.trim().split(/\s+/).at(-1);
 
+        console.log(nameUser)
+        console.log(dataUser.paymentcpf.replace(/\D/g, ""))
+
         const payloader = {
             transaction_amount: valueTicket,
 
