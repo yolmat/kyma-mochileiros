@@ -29,7 +29,7 @@ export default function CheckoutPage() {
     const stepFields = {
         1: ["name", "cpf", "rg", "email", "phone", 'birth'],
         2: ['cep', 'street', 'number', 'district', 'city',],
-        3: [],
+        3: ['useMedication'],
         4: [],
         5: []
     };
@@ -202,10 +202,12 @@ export default function CheckoutPage() {
                                     {step === 3 && (
                                         <motion.div key="step3" className="space-y-4">
                                             <Steap3
-                                                prevStep={prevStep}
-                                                setStatus={setStatus}
-                                                setStep={setStep}
+                                                register={register}
+                                                setValue={setValue}
+                                                watch={watch}
                                                 errors={errors}
+                                                nextStep={nextStep}
+                                                prevStep={prevStep}
                                             />
                                         </motion.div>
                                     )}
