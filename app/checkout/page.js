@@ -216,7 +216,11 @@ export default function CheckoutPage() {
                                             <Steap4
                                                 status={status}
                                                 setStep={setStep}
+                                                setValue={setValue}
                                                 prevStep={prevStep}
+                                                register={register}
+                                                watch={watch}
+                                                errors={errors}
                                             />
                                         </motion.div>
                                     )}

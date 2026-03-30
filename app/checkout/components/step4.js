@@ -1,3 +1,4 @@
+'use client'
 
 import { initMercadoPago, Payment } from '@mercadopago/sdk-react';
 import { useState } from "react";
@@ -5,13 +6,41 @@ import { v4 as uuidv4 } from "uuid";
 import { initialization, customization, onReady, onError } from '@/app/features/configPayment';
 import Button from './button';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { createInputStyle } from "@/app/features/createInputStyle";
 
 const publicKey = process.env.NEXT_PUBLIC_KEY_TESTE
 const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
 
 initMercadoPago(publicKey)
 
-export default function Steap4({ prevStep, setStatus, setStep }) {
+export default function Steap4({ prevStep, setStatus, setStep, register, errors, watch, setValue }) {
+
+    const userPayment = (e) => {
+        const nameDataPayment = e.target.value
+
+        setDataUserPayment(nameDataPayment)
+    }
+
+    const cpfPayment = (e) => {
+        const cpfDataPayment = e.target.value
+
+        setDataCpfPaymento(cpfDataPayment)
+    }
+
+    const maskCPF = (value) => {
+        const cleaned = value
+            .replace(/\D/g, "")
+            .slice(0, 11);
+
+        return cleaned
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    };
+
+    const inputStyle = createInputStyle(errors)
+
     // =========================
     // Mercado Pago Submit
     // =========================
@@ -26,7 +55,7 @@ export default function Steap4({ prevStep, setStatus, setStep }) {
         const dataLocalStorage = localStorage.getItem('checkout_v2')
         const dataUser = JSON.parse(dataLocalStorage)
 
-        const nameUser = dataUser.name
+        const nameUser = dataUser.paymentname
         const separetor = nameUser.trim().split(/\s+/)
 
         const firstNameUser = separetor.at(0)
@@ -45,7 +74,7 @@ export default function Steap4({ prevStep, setStatus, setStep }) {
                 last_name: lastNameUser,
                 identification: {
                     type: 'CPF',
-                    number: dataUser.cpf.replace(/\D/g, "")
+                    number: dataUser.paymentcpf.replace(/\D/g, "")
                 }
             },
             ticket: {
@@ -53,6 +82,12 @@ export default function Steap4({ prevStep, setStatus, setStep }) {
                 email: dataUser.email,
                 phone: dataUser.phone,
                 document: dataUser.cpf,
+                birth: dataUser.birth,
+                cep: dataUser.cep,
+                city: dataUser.city,
+                district: dataUser.district,
+                state: dataUser.state,
+                street: dataUser.street
             },
             items: [
                 {
@@ -126,6 +161,67 @@ export default function Steap4({ prevStep, setStatus, setStep }) {
 
     return (
         <>
+            {(true) && (
+                <motion.div key="step4" className="space-y-4">
+                    <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Nome completo do Pagador:
+                        </label>
+                        <input
+                            {...register("paymentname")}
+                            name="paymentname"
+                            placeholder="Bruna Rodrigues Ferreira"
+
+                            className={inputStyle("paymentname")}
+                        />
+                        {errors.name && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="
+                            flex items-center gap-2 mt-2 px-3 py-2
+                            rounded-lg
+                            bg-red-500/10
+                            text-red-500 text-sm"
+                            >
+                                <span className="text-red-500">⚠</span>
+                                <span>{errors.name.message}</span>
+                            </motion.div>
+                        )}
+                    </div>
+                    <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            CPF do Pagador:
+                        </label>
+                        <input
+                            {...register("paymentcpf")}
+                            name="paymentcpf"
+                            placeholder="000.000.000-00"
+                            onChange={async (e) => {
+                                await cpfPayment(e);
+                                setValue("paymentcpf", maskCPF(e.target.value), { shouldValidate: true })
+                            }}
+                            className={inputStyle("paymentcpf")}
+                        />
+                        {errors.cpf && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="
+                                        flex items-center gap-2 mt-2 px-3 py-2
+                                        rounded-lg
+                                        bg-red-500/10
+                                        text-red-500 text-sm"
+                            >
+                                <span className="text-red-500">⚠</span>
+                                <span>{errors.cpf.message}</span>
+                            </motion.div>
+                        )}
+                    </div>
+                </motion.div>
+            )}
             {methodPayment && (
                 <div className="flex flex-col items-center text-center gap-6">
 
@@ -182,7 +278,7 @@ export default function Steap4({ prevStep, setStatus, setStep }) {
                     </div>
                 </div>
             )}
-            {!methodPayment && (
+            {(!methodPayment) && (
                 <Payment
                     initialization={initialization}
                     customization={customization}
