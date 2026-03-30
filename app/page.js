@@ -97,7 +97,7 @@ function Countdown({ eventDate }) {
         <section
           className="relative flex min-h-screen items-center overflow-hidden bg-cover bg-center px-6"
           style={{
-            backgroundImage: `linear-gradient(rgba(13,13,13,0.75), rgba(13,13,13,0.88)), url(${MochileirosBanner.src})`,
+            backgroundImage: `linear-gradient(rgba(13,13,13,0.45), rgba(13,13,13,0.65)), url(${MochileirosBanner.src})`,
           }}
         >
           <div className="mx-auto grid max-w-7xl gap-12 pt-40 sm:pt-44 lg:grid-cols-2 lg:items-center lg:pt-28">
