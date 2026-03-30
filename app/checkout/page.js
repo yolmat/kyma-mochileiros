@@ -47,7 +47,7 @@ export default function CheckoutPage() {
         mode: "onChange",
     });
 
-    const totalSteps = 4;
+    const totalSteps = 5;
     const progress = ((step - 1) / (totalSteps - 1)) * 100;
 
     const inputStyle = createInputStyle(errors)
@@ -216,6 +216,7 @@ export default function CheckoutPage() {
                                             <Steap4
                                                 status={status}
                                                 setStep={setStep}
+                                                prevStep={prevStep}
                                             />
                                         </motion.div>
                                     )}

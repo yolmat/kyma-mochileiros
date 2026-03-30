@@ -47,7 +47,7 @@ export default function Steap2(
 
         const cep = masked.replace(/\D/g, "");
 
-        if (cep.length !== 8) return;
+        if (cep.length < 8) return;
 
         try {
             const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
