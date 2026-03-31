@@ -29,7 +29,7 @@ export default function CheckoutPage() {
     const stepFields = {
         1: ["name", "cpf", "rg", "email", "phone", 'birth'],
         2: ['cep', 'street', 'number', 'district', 'city',],
-        3: ['useMedication'],
+        3: ['useMedication', 'healthProblem', 'foodRestriction', 'acceptTheTerms'],
         4: [],
         5: []
     };

@@ -9,12 +9,12 @@ export default async function validationClient(cpf) {
         })
 
         // Encontrado
-        if (res.ok === true) {
+        if (res.success === true) {
             return true
         }
 
         // Não encontrado
-        if (res.ok === false) {
+        if (res.success === false) {
             return false
         }
 

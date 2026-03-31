@@ -1,13 +1,14 @@
 'use client'
 
 import { initMercadoPago, Payment } from '@mercadopago/sdk-react';
-import { useState } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { initialization, customization, onReady, onError } from '@/app/features/configPayment';
 import Button from './button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { createInputStyle } from "@/app/features/createInputStyle";
+import validationClient from '@/app/features/validations';
 
 const publicKey = process.env.NEXT_PUBLIC_KEY_TESTE
 const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
@@ -16,20 +17,114 @@ initMercadoPago(publicKey)
 
 export default function Steap4({ prevStep, setStatus, setStep, register, errors, watch, setValue }) {
 
-    /*const [aataUserPayment, setDataUserPayment] = useState()
-    const [dataCpfPayment, setDataCpfPayment] = useState()
+    // =========================
+    // Create ticket
+    // =========================
+    const [loading, setLoading] = useState(true)
+    const [errorTicket, setErrorTicket] = useState(false)
+    const [statusTicket, setStatusTicket] = useState(false)
+    const [hasTicket, setHasTicket] = useState(false)
+    const hasCreatedUser = useRef(false)
 
-    const userPayment = (e) => {
-        const nameDataPayment = e.target.value
+    useEffect(() => {
 
-        setDataUserPayment(nameDataPayment)
-    }
+        const dataLocalStorageTicket = localStorage.getItem('checkout_v2')
+        const dataUserTicket = JSON.parse(dataLocalStorageTicket)
 
-    const cpfPayment = (e) => {
-        const cpfDataPayment = e.target.value
+        const cpf = dataUserTicket.cpf
 
-        setDataCpfPayment(cpfDataPayment)
-    }*/
+        const payloaderTicket = {
+            ticket: {
+                name: dataUserTicket.name,
+                email: dataUserTicket.email,
+                cpf: dataUserTicket.cpf.replace(/\D/g, ""),
+                phone: dataUserTicket.phone,
+                document: dataUserTicket.cpf,
+                rg: dataUserTicket.rg,
+                birth: dataUserTicket.birth,
+                cep: dataUserTicket.cep,
+                number: dataUserTicket.number,
+                city: dataUserTicket.city,
+                district: dataUserTicket.district,
+                state: dataUserTicket.state,
+                street: dataUserTicket.street,
+                acceptTheTerms: dataUserTicket.acceptTheTerms
+            },
+        }
+
+        if (hasCreatedUser.current) return
+
+        hasCreatedUser.current = true
+
+        const createUser = async () => {
+            try {
+                setLoading(true)
+
+                const validationTicket = await fetch('/api/validation-ticket', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cpf: cpf }),
+                })
+
+                const dataValidationTicket = await validationTicket.json()
+
+                console.log(dataValidationTicket)
+
+                if (dataValidationTicket.success === true) {
+                    localStorage.setItem(
+                        'checkout_v2',
+                        JSON.stringify({
+                            ...JSON.parse(localStorage.getItem('checkout_v2') || '{}'),
+                            id: dataValidationTicket.data.id
+                        })
+                    )
+                    setLoading(false)
+                    setStatusTicket(true)
+                    return
+                }
+
+                const responseCreate = await fetch('/api/create-ticket', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payloaderTicket),
+                })
+
+                if (responseCreate.status === 400) {
+                    setErrorTicket(true)
+                    setLoading(false)
+                    return
+                }
+
+                const data = await responseCreate.json()
+                // caso queira salvar o id do usuário
+                await localStorage.setItem(
+                    'checkout_v2',
+                    JSON.stringify({
+                        ...JSON.parse(localStorage.getItem('checkout_v2') || '{}'),
+                        id: data.data.id
+                    })
+                )
+
+                setLoading(false)
+            } catch (err) {
+                console.error(err)
+                setErrorTicket(true)
+                setLoading(false)
+            }
+        }
+
+        createUser()
+    }, [])
+
+    // =========================
+    // Configs visible
+    // =========================
+    const paymentname = watch('paymentname') || ''
+    const paymentcpf = watch('paymentcpf') || ''
 
     const maskCPF = (value) => {
         const cleaned = value
@@ -41,6 +136,13 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
             .replace(/(\d{3})(\d)/, "$1.$2")
             .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
     };
+
+    const paymentVisible = useMemo(() => {
+        const validName = paymentname.trim().length >= 2
+        const validCpf = paymentcpf.length === 14
+
+        return validName && validCpf
+    }, [paymentname, paymentcpf])
 
     const inputStyle = createInputStyle(errors)
 
@@ -64,9 +166,6 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
         const firstNameUser = separetor.at(0)
         const lastNameUser = nameUser.trim().split(/\s+/).at(-1);
 
-        console.log(nameUser)
-        console.log(dataUser.paymentcpf.replace(/\D/g, ""))
-
         const payloader = {
             transaction_amount: valueTicket,
 
@@ -84,16 +183,23 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                 }
             },
             ticket: {
+                id: dataUser.id,
                 name: dataUser.name,
                 email: dataUser.email,
+                cpf: dataUser.paymentcpf.replace(/\D/g, ""),
                 phone: dataUser.phone,
                 document: dataUser.cpf,
+                rg: dataUser.rg,
                 birth: dataUser.birth,
                 cep: dataUser.cep,
+                number: dataUser.number,
                 city: dataUser.city,
                 district: dataUser.district,
                 state: dataUser.state,
-                street: dataUser.street
+                street: dataUser.street,
+                paymentcpf: dataUser.paymentcpf,
+                paymentname: dataUser.paymentname,
+                acceptTheTerms: dataUser.acceptTheTerms
             },
             items: [
                 {
@@ -111,7 +217,7 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
 
         try {
             const res = await fetch("/api/create-payment", {
-                method: "POST",
+                method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -128,7 +234,7 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
             if (data?.id) {
 
                 await fetch('api/create-ticket', {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -165,9 +271,32 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
         }
     };
 
+    if (loading) {
+        return (
+            <div className="flex min-h-[300px] items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                        Preparando seu cadastro...
+                    </span>
+                </div>
+            </div>
+        )
+    }
+
+    if (errorTicket) {
+        return (
+            <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-center dark:border-red-900 dark:bg-red-950/30">
+                <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                    Não foi possível concluir seu cadastro. Tente novamente ou entre em contato com o suporter.
+                </p>
+            </div>
+        )
+    }
+
     return (
         <>
-            {(true) && (
+            {(!methodPayment) && (
                 <motion.div key="step4" className="space-y-4">
                     <div>
                         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -283,7 +412,81 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                     </div>
                 </div>
             )}
-            {(!methodPayment) && (
+            {(hasTicket) && (
+                <div className="flex min-h-[70vh] items-center justify-center px-4">
+                    <div
+                        className="
+            w-full max-w-xl rounded-3xl
+            border border-amber-200 dark:border-amber-900
+            bg-white dark:bg-gray-900
+            p-8 shadow-xl
+        "
+                    >
+                        <div className="flex flex-col items-center text-center">
+                            <div
+                                className="
+                    mb-6 flex h-20 w-20 items-center justify-center
+                    rounded-full bg-amber-100 dark:bg-amber-950/40
+                    text-4xl
+                "
+                            >
+                                ⚠️
+                            </div>
+
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                CPF já cadastrado
+                            </h1>
+
+                            <p className="mt-4 max-w-md text-sm leading-7 text-gray-600 dark:text-gray-400">
+                                Este CPF já realizou a compra do Passaporte Mochileiros e não é
+                                possível efetuar uma nova inscrição utilizando o mesmo documento.
+                            </p>
+
+                            <div
+                                className="
+                    mt-6 w-full rounded-2xl
+                    border border-amber-200 dark:border-amber-800
+                    bg-amber-50 dark:bg-amber-950/20
+                    px-5 py-4
+                "
+                            >
+                                <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                                    Caso você já tenha efetuado o pagamento e queira consultar o
+                                    status do seu pedido, utilize a área de consulta pelo CPF.
+                                </p>
+                            </div>
+
+                            <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row">
+                                <button
+                                    type="button"
+                                    onClick={() => window.location.href = '/consulta'}
+                                    className="
+                        flex-1 rounded-2xl bg-blue-600 px-5 py-3
+                        text-sm font-semibold text-white
+                        transition hover:bg-blue-500
+                    "
+                                >
+                                    Consultar Pedido
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => window.location.reload()}
+                                    className="
+                        flex-1 rounded-2xl border border-gray-300 dark:border-gray-700
+                        px-5 py-3 text-sm font-semibold
+                        text-gray-700 dark:text-gray-300
+                        transition hover:bg-gray-100 dark:hover:bg-gray-800
+                    "
+                                >
+                                    Voltar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {(!methodPayment && paymentVisible) && (
                 <Payment
                     initialization={initialization}
                     customization={customization}
