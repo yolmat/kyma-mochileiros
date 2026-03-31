@@ -14,15 +14,30 @@ datasource db {
 }
 
 model ticket {
-  id                 String   @unique @default(uuid())
+  id                 String    @unique @default(uuid())
   name               String
-  email              String   @unique
+  email              String    @unique
   phone              String
-  document           String   @unique
+  document           String    @unique
   transaction_amount Decimal
   payment_method_id  String
   id_payment         Decimal
   status_payment     String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+
+  birth              String?
+  cep                String?
+  street             String?
+  number             String?
+  district           String?
+  city               String?
+  rg                 String?
+  useMedication      String?
+  healthProblem      String?
+  foodRestriction    String?
+  paymentname        String?
+  paymentcpf         String?
+  acceptTheTerms     Boolean?
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 }
