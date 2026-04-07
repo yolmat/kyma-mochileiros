@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
-import kymaDark from '@/public/kymaLight.png'
-import Image from 'next/image'
+import Logo from '@/components/logo'
 
 
 const passwordDashboard = process.env.NEXT_PUBLIC_PASSWORD_DASHBOARD
@@ -187,11 +186,10 @@ export default function DashboardInscricoes() {
                                 Acompanhe pagamentos, participantes e dados cadastrais em tempo real.
                             </p>
                         </div>
-
-                        <div className="flex items-center gap-3">
-                            <Image src={kymaDark} alt="Logo Kyma" className="h-15 w-auto" />
-                            <h1 className="text-2xl font-bold">Kyma</h1>
-                        </div>
+                        <Logo
+                            size={15}
+                            name={true}
+                        />
                     </header>
 
                     <section className="mb-10">

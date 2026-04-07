@@ -10,6 +10,7 @@ import MochileirosBanner from '@/public/MochileirosBanner.png'
 import kymaDark from '@/public/kymaLight.png'
 import Steap1 from "./components/step1";
 import { createInputStyle } from "@/app/features/createInputStyle";
+import Logo from '@/components/logo'
 import Steap2 from "./components/step2";
 import Steap3 from "./components/step3";
 import Steap4 from "./components/step4";
@@ -119,10 +120,10 @@ export default function CheckoutPage() {
 
                     {/* TOP */}
                     <div className="flex flex-col items-center gap-6 w-full">
-                        <div className="flex items-center gap-3">
-                            <Image src={kymaDark} alt="Logo Kyma" className="h-8 w-auto" />
-                            <h1 className="text-2xl font-bold">Kyma</h1>
-                        </div>
+                        <Logo
+                            size={8}
+                            name={true}
+                        />
 
                         {/* BANNER */}
                         <Image

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react"
 import MochileirosBanner from '@/public/MochileirosBanner.png'
-import Link from "next/link"
 import kymaDark from '@/public/kymaLight.png'
 import Image from "next/image"
+import Logo from "@/components/logo"
+import ButtonLinks from "@/components/buttonLinks"
 
 export default function MochileirosLandingPage() {
   const eventDate = new Date('2026-08-28T18:00:00').getTime()
@@ -71,13 +72,11 @@ function Countdown({ eventDate }) {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#0D0D0D]/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
-          <div className="flex items-center gap-3">
-            <Image src={kymaDark} alt="Logo Kyma" className="h-8 w-auto" />
-            <div>
-              <p className="text-lg font-bold">Kyma</p>
-              <p className="text-xs text-[#8A8A8A]">Mochileiros 2.0</p>
-            </div>
-          </div>
+          <Logo
+            size={8}
+            name={true}
+            extraTag={(<p className="text-xs text-[#8A8A8A]">Mochileiros 2.0</p>)}
+          />
 
           <nav className="flex flex-wrap items-center justify-center gap-4 text-center text-xs font-medium sm:gap-6 sm:text-sm md:justify-end md:gap-8">
             <a href="#sobre" className="text-[#CFCFCF] transition hover:text-[#FF7A18]">
@@ -95,6 +94,7 @@ function Countdown({ eventDate }) {
 
       <main>
         <section
+          id='inicio'
           className="relative flex min-h-screen items-center overflow-hidden bg-cover bg-center px-6"
           style={{
             backgroundImage: `linear-gradient(rgba(13,13,13,0.45), rgba(13,13,13,0.65)), url(${MochileirosBanner.src})`,
@@ -115,19 +115,21 @@ function Countdown({ eventDate }) {
               </p>
 
               <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-                <a
-                  href="#inscricao"
-                  className="rounded-2xl bg-[#FF7A18] px-8 py-4 text-base font-bold text-white transition hover:bg-[#F4A261]"
+                <ButtonLinks
+                  href={'#inscricao'}
+                  typeButton={'action'}
+                  internal={true}
                 >
                   Faça sua Inscrição
-                </a>
+                </ButtonLinks>
 
-                <a
-                  href="#sobre"
-                  className="rounded-2xl border border-white/15 bg-white/5 px-8 py-4 text-base font-semibold text-[#CFCFCF] transition hover:border-[#2EC4B6] hover:text-[#2EC4B6]"
+                <ButtonLinks
+                  href={'#sobre'}
+                  typeButton={'information'}
+                  internal={true}
                 >
                   Saiba Mais
-                </a>
+                </ButtonLinks>
               </div>
             </div>
 
@@ -272,12 +274,14 @@ function Countdown({ eventDate }) {
               />
             </div>
 
-            <Link
-              href="/checkout"
-              className="mt-14 inline-flex w-full items-center justify-center rounded-2xl bg-[#FF7A18] px-10 py-5 text-lg font-bold text-white transition hover:bg-[#F4A261] sm:w-auto"
+            <ButtonLinks
+              href={'/checkout'}
+              typeButton={'action'}
+              extraClass={'mt-14 px-10 py-5 text-lg'}
             >
-              Fazer Inscrição
-            </Link>
+              Faça sua Inscrição
+            </ButtonLinks>
+
           </div>
         </section>
 
@@ -295,14 +299,13 @@ function Countdown({ eventDate }) {
               Fique por dentro de novidades, avisos e atualizações do evento Mochileiros 2.0.
             </p>
 
-            <a
-              href="https://www.instagram.com/triakyma/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-10 inline-flex items-center gap-3 rounded-2xl border border-[#FF7A18]/30 bg-[#FF7A18]/10 px-8 py-4 text-lg font-bold text-[#FF7A18] transition hover:bg-[#FF7A18] hover:text-white"
+            <ButtonLinks
+              href={"https://www.instagram.com/triakyma/"}
+              target={true}
+              typeButton={'social'}
             >
               Instagram da Kyma
-            </a>
+            </ButtonLinks>
           </div>
         </section>
       </main>
