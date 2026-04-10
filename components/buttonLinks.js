@@ -32,7 +32,7 @@ export default function ButtonLinks({ children, target, href, typeButton, intern
     return (
         <Link
             href={href}
-            target={target === true && '_blank'}
+            target={target === true ? '_blank' : ''}
             onClick={
                 internal
                     ? (e) => {
