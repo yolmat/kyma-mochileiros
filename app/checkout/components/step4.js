@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { createInputStyle } from "@/app/features/createInputStyle";
 import validationClient from '@/app/features/validations';
+import NextAndPrevButtons from './nextAndPrevButtons';
 
 const publicKey = process.env.NEXT_PUBLIC_KEY_TESTE
 const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
@@ -494,13 +495,12 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                     onReady={onReady}
                     onError={onError}
                 />)}
-            <Button
-                type={'button'}
-                onClick={prevStep}
-                extraClass={'opacity-100 cursor-pointer hover:opacity-90 active:opacity-80'}
-            >
-                Voltar
-            </Button>
+            <NextAndPrevButtons
+                next={false}
+                prev={true}
+                childrenPrev={'Voltar'}
+                onClickPrev={prevStep}
+            />
         </>
     )
 }

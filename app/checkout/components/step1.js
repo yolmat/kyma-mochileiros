@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { createInputStyle } from "@/app/features/createInputStyle";
 import Button from "./button";
+import NextAndPrevButtons from "./nextAndPrevButtons";
 
 export default function Steap1({
     register,
@@ -228,16 +229,15 @@ export default function Steap1({
                     </motion.div>
                 )}
             </div>
-            <div className="flex justify-end">
-                <Button
-                    type={'button'}
-                    onClick={nextStep}
-                    disabled={isStepValid ? true : false}
-                    extraClass={isStepValid ? 'opacity-100  cursor-pointer hover:opacity-90 active:opacity-80' : 'opacity-50 cursor-not-allowed'}
-                >
-                    {isStepValid ? 'Continuar' : 'Preencha os Dados'}
-                </Button>
-            </div>
+            <NextAndPrevButtons
+                next={true}
+                prev={false}
+                childrenNext={isStepValid ? 'Continuar' : 'Preencha os Dados'}
+                childrenPrev={'Voltar'}
+                onClickNext={nextStep}
+                disabled={isStepValid ? false : true}
+                extraClass={isStepValid ? ' active:opacity-80' : 'opacity-50 cursor-not-allowed'}
+            />
         </motion.div>
     );
 }

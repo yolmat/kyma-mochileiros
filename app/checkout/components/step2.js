@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { createInputStyle } from "@/app/features/createInputStyle";
 import { useState } from "react";
 import Button from "./button";
+import NextAndPrevButtons from "./nextAndPrevButtons";
 
 
 export default function Steap2(
@@ -224,27 +225,16 @@ export default function Steap2(
                     </motion.div>
                 )}
             </div>
-            <div className="flex justify-between gap-3">
-                <Button
-                    type={'button'}
-                    onClick={prevStep}
-                    extraClass={'opacity-100 cursor-pointer hover:opacity-90 active:opacity-80'}
-                >
-                    Voltar
-                </Button>
-                <Button
-                    type="button"
-                    onClick={nextStep}
-                    disabled={!isStepValid}
-                    extraClass={
-                        isStepValid
-                            ? 'opacity-100 cursor-pointer hover:opacity-90 active:opacity-80'
-                            : 'opacity-50 cursor-not-allowed'
-                    }
-                >
-                    {isStepValid ? 'Continuar' : 'Preencha os Dados'}
-                </Button>
-            </div>
+            <NextAndPrevButtons
+                next={true}
+                prev={true}
+                childrenNext={isStepValid ? 'Continuar' : 'Preencha os Dados'}
+                childrenPrev={'Voltar'}
+                onClickNext={nextStep}
+                onClickPrev={prevStep}
+                disabled={isStepValid ? false : true}
+                extraClass={isStepValid ? ' active:opacity-80' : 'opacity-50 cursor-not-allowed'}
+            />
         </motion.div>
     )
 }
