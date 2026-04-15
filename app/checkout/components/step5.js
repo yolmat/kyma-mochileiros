@@ -1,14 +1,20 @@
 
 import { AnimatePresence, motion } from "framer-motion";
-import Button from "./button";
+import Button from "@/components/button";
+import { useRouter } from "next/router";
 
 export default function Steap5({ status, setStep }) {
+
+
+    const router = useRouter()
 
     const resetCheckout = () => {
         localStorage.removeItem("checkout_v2");
         localStorage.removeItem("checkout_step");
 
         setStep(1);
+
+        router.refresh()
     };
 
     return (
