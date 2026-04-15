@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { createInputStyle } from "@/app/features/createInputStyle";
-import Button from "./button";
 import NextAndPrevButtons from "./nextAndPrevButtons";
+import Input from "@/components/input";
 
 export default function Steap2(
     { register,
@@ -80,33 +80,15 @@ export default function Steap2(
                         </p>
 
                         {healthInfo.useMedication && (
-                            <div className="mt-4">
-                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Se sim, qual?
-                                </label>
-
-                                <input
-                                    {...register("useMedication")}
-                                    placeholder="Ex.: Dipirona, Insulina..."
-                                    className={inputStyle("useMedication")}
-                                />
-
-                                {errors.useMedication && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0 }}
-                                        className="
-                                flex items-center gap-2 mt-2 px-3 py-2
-                                rounded-lg
-                                bg-red-500/10
-                                text-red-500 text-sm"
-                                    >
-                                        <span className="text-red-500">⚠</span>
-                                        <span>{errors.useMedication.message}</span>
-                                    </motion.div>
-                                )}
-                            </div>
+                            <Input
+                                LabelChidren='Se sim, Qual ?'
+                                InputCondition={'useMedication'}
+                                placeholder='Ex.: Dipirona, Insulina...'
+                                register={register}
+                                onChangeBoolean={false}
+                                setValue={setValue}
+                                errors={errors}
+                            />
                         )}
                     </div>
                 </div>
@@ -135,33 +117,15 @@ export default function Steap2(
                         </p>
 
                         {healthInfo.healthProblem && (
-                            <div className="mt-4">
-                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Se sim, qual?
-                                </label>
-
-                                <input
-                                    {...register("healthProblem")}
-                                    placeholder="Ex.: Asma, Hipertensão..."
-                                    className={inputStyle("healthProblem")}
-                                />
-
-                                {errors.healthProblem && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0 }}
-                                        className="
-                                flex items-center gap-2 mt-2 px-3 py-2
-                                rounded-lg
-                                bg-red-500/10
-                                text-red-500 text-sm"
-                                    >
-                                        <span className="text-red-500">⚠</span>
-                                        <span>{errors.healthProblem.message}</span>
-                                    </motion.div>
-                                )}
-                            </div>
+                            <Input
+                                LabelChidren='Se sim, Qual ?'
+                                InputCondition={'healthProblem'}
+                                placeholder="Ex.: Asma, Hipertensão..."
+                                register={register}
+                                onChangeBoolean={false}
+                                setValue={setValue}
+                                errors={errors}
+                            />
                         )}
                     </div>
                 </div>
@@ -190,37 +154,20 @@ export default function Steap2(
                         </p>
 
                         {healthInfo.foodRestriction && (
-                            <div className="mt-4">
-                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Se sim, qual?
-                                </label>
-
-                                <input
-                                    {...register("foodRestriction")}
-                                    placeholder="Ex.: Lactose, Glúten, Amendoim..."
-                                    className={inputStyle("foodRestriction")}
-                                />
-
-                                {errors.foodRestriction && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0 }}
-                                        className="
-                                flex items-center gap-2 mt-2 px-3 py-2
-                                rounded-lg
-                                bg-red-500/10
-                                text-red-500 text-sm"
-                                    >
-                                        <span className="text-red-500">⚠</span>
-                                        <span>{errors.foodRestriction.message}</span>
-                                    </motion.div>
-                                )}
-                            </div>
+                            <Input
+                                LabelChidren='Se sim, Qual ?'
+                                InputCondition={'foodRestriction'}
+                                placeholder="Ex.: Lactose, Glúten, Amendoim..."
+                                register={register}
+                                onChangeBoolean={false}
+                                setValue={setValue}
+                                errors={errors}
+                            />
                         )}
                     </div>
                 </div>
             </div>
+
             <div className="rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm">
                 <div className="flex items-start gap-3">
                     <input

@@ -4,12 +4,12 @@ import { initMercadoPago, Payment } from '@mercadopago/sdk-react';
 import { useState, useMemo, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { initialization, customization, onReady, onError } from '@/app/features/configPayment';
-import Button from './button';
+import Button from '@/components/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { createInputStyle } from "@/app/features/createInputStyle";
-import validationClient from '@/app/features/validations';
 import NextAndPrevButtons from './nextAndPrevButtons';
+import Input from '@/components/input';
 
 const publicKey = process.env.NEXT_PUBLIC_KEY_TESTE
 const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
@@ -299,62 +299,27 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
         <>
             {(!methodPayment) && (
                 <motion.div key="step4" className="space-y-4">
-                    <div>
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Nome completo do Pagador:
-                        </label>
-                        <input
-                            {...register("paymentname")}
-                            name="paymentname"
-                            placeholder="Bruna Rodrigues Ferreira"
 
-                            className={inputStyle("paymentname")}
-                        />
-                        {errors.name && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className="
-                            flex items-center gap-2 mt-2 px-3 py-2
-                            rounded-lg
-                            bg-red-500/10
-                            text-red-500 text-sm"
-                            >
-                                <span className="text-red-500">⚠</span>
-                                <span>{errors.name.message}</span>
-                            </motion.div>
-                        )}
-                    </div>
-                    <div>
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            CPF do Pagador:
-                        </label>
-                        <input
-                            {...register("paymentcpf")}
-                            name="paymentcpf"
-                            placeholder="000.000.000-00"
-                            onChange={async (e) => {
-                                setValue("paymentcpf", maskCPF(e.target.value), { shouldValidate: true })
-                            }}
-                            className={inputStyle("paymentcpf")}
-                        />
-                        {errors.cpf && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className="
-                                        flex items-center gap-2 mt-2 px-3 py-2
-                                        rounded-lg
-                                        bg-red-500/10
-                                        text-red-500 text-sm"
-                            >
-                                <span className="text-red-500">⚠</span>
-                                <span>{errors.cpf.message}</span>
-                            </motion.div>
-                        )}
-                    </div>
+                    <Input
+                        LabelChidren='Nome completo do Pagador:'
+                        InputCondition={'paymentname'}
+                        placeholder='Bruna Oliveira de Santos Madeiros'
+                        register={register}
+                        onChangeBoolean={false}
+                        setValue={setValue}
+                        errors={errors}
+                    />
+
+                    <Input
+                        LabelChidren='CPF do Pagador:'
+                        InputCondition={'paymentcpf'}
+                        placeholder='000.000.000-00'
+                        register={register}
+                        onChangeBoolean={true}
+                        setValue={setValue}
+                        errors={errors}
+                    />
+
                 </motion.div>
             )}
             {methodPayment && (
@@ -407,7 +372,6 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                                 >
                                     Verificar pagamento
                                 </Button>
-
                             </Link>
                         </div>
                     </div>
