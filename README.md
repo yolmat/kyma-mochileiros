@@ -1,12 +1,5 @@
 # 🎒 Kyma Mochileiros
 
-
-
-
-
-
-\
-
 Aplicação web desenvolvida para o **Kyma Mochileiros**, com foco na experiência de compra, gerenciamento de reservas e processamento de pagamentos para viagens e experiências.
 
 🌐 **Aplicação:** https://kyma-mochileiros.vercel.app
