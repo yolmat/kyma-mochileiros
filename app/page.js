@@ -252,7 +252,7 @@ function Countdown({ eventDate }) {
                 date="31 de maio"
                 price="R$ 250,00"
                 spots="15 vagas"
-                featured
+                canceled
               />
 
               <LotCard
@@ -260,7 +260,7 @@ function Countdown({ eventDate }) {
                 date="05 de julho"
                 price="R$ 300,00"
                 spots="25 vagas"
-                blurred
+                featured
               />
 
               <LotCard
@@ -326,7 +326,7 @@ function CountdownCard({ value, label }) {
   )
 }
 
-function LotCard({ title, date, price, spots, featured, blurred }) {
+function LotCard({ title, date, price, spots, featured, blurred, canceled }) {
   return (
     <div
       className={`relative overflow-hidden rounded-[2rem] border p-8 text-left shadow-2xl transition ${featured
@@ -343,6 +343,19 @@ function LotCard({ title, date, price, spots, featured, blurred }) {
       )}
 
       <div className={blurred ? 'blur-md' : ''}>
+
+        {canceled && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#FF7A18]/30 backdrop-blur-[2px]">
+            <span className="text-[12rem] font-black leading-none text-[#FF7A18]/80">
+              ✕
+            </span>
+
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-[#FF7A18] px-6 py-2 text-sm font-bold uppercase tracking-[0.3em] text-white">
+              Encerrado
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between">
           <h3 className="text-2xl font-black text-white">{title}</h3>
           {featured && (
