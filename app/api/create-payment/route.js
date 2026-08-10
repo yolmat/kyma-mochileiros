@@ -28,23 +28,46 @@ export async function POST(req) {
     try {
         const body = await req.json();
 
+        console.log(body)
+
         const data = schema.parse(body);
 
         const client = new MercadoPagoConfig({ accessToken: publicToken, options: { timeout: 10000 } });
 
         const payment = new Payment(client);
 
-        const newPayment = await payment.create({
+        /*const newPayment = await payment.create({
             body: data,
+            requestOptions: {
+                idempotencyKey: body.external_reference,
+            },
+        });*/
+
+        const newPayment = await payment.create({
+            body: {
+                ...data,
+
+                three_d_secure_mode: "optional",
+
+                capture: true,
+
+                binary_mode: false,
+            },
+
             requestOptions: {
                 idempotencyKey: body.external_reference,
             },
         });
 
+        console.log(newPayment)
+
         return Response.json({
 
             id: newPayment.id,
             status: newPayment.status,
+            status_detail: newPayment.status_detail,
+
+            three_ds_info: newPayment.three_ds_info ?? null,
 
             qr_code:
                 newPayment.point_of_interaction?.transaction_data?.qr_code,

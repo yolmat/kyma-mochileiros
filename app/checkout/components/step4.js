@@ -1,6 +1,6 @@
 'use client'
 
-import { initMercadoPago, Payment } from '@mercadopago/sdk-react';
+import { initMercadoPago, Payment, StatusScreen } from '@mercadopago/sdk-react';
 import { useState, useMemo, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { initialization, customization, onReady, onError } from '@/app/features/configPayment';
@@ -17,6 +17,8 @@ initMercadoPago(publicKey)
 
 export default function Steap4({ prevStep, setStatus, setStep, register, errors, watch, setValue }) {
 
+    const valueTicket = process.env.NEXT_PUBLIC_VALUE_TICKET
+
     // =========================
     // Create ticket
     // =========================
@@ -25,6 +27,7 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
     const [statusTicket, setStatusTicket] = useState(false)
     const [hasTicket, setHasTicket] = useState(false)
     const hasCreatedUser = useRef(false)
+    const [threeDSData, setThreeDSData] = useState(null);
 
     useEffect(() => {
 
@@ -48,7 +51,8 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                 district: dataUserTicket.district,
                 state: dataUserTicket.state,
                 street: dataUserTicket.street,
-                acceptTheTerms: dataUserTicket.acceptTheTerms
+                acceptTheTerms: dataUserTicket.acceptTheTerms,
+                transaction_amount: valueTicket
             },
         }
 
@@ -208,8 +212,8 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                     description: "28/08/2026 | Ingresso para o evento mochileiros da Igreja do Evangelho Quadrangular Vila Dionisia e Vila Carolina",
                     category_id: "Tickets",
                     quantity: 1,
-                    unit_price: 1,
-                    event_date: "28-08-26-30-08-26T19:00:00.000-13:00",
+                    unit_price: 300,
+                    event_date: '2026-08-28T19:00:00-03:00'
                 }
             ],
             external_reference: idempotencyKey,
@@ -226,32 +230,36 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
 
             const data = await res.json()
 
-            const ticketBody = {
-                ...payloader,
-                payment: data,
+            if (data.status === "approved") {
+
+                const ticketBody = {
+                    ...payloader,
+                    payment: data,
+                };
+
+                if (data?.id) {
+                    await fetch("/api/create-ticket", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(ticketBody),
+                    });
+                }
+
+                setStatus(ticketBody);
+                setStep((prev) => prev + 1);
+
+                return;
             }
 
-            if (data?.id) {
-
-                await fetch('api/create-ticket', {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(ticketBody),
-                })
+            if (
+                data.status === "pending" &&
+                data.status_detail === "pending_challenge"
+            ) {
+                setThreeDSData(data);
+                return;
             }
-
-            if (formData.payment_method_id === "pix") {
-                setMethodPayment(data);
-
-                return methodPayment;
-            }
-
-            setStatus(ticketBody)
-
-            setStep((prev) => prev + 1)
-            return;
 
         } catch (e) {
             console.error(e);
@@ -296,6 +304,7 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
 
     return (
         <>
+
             {(!methodPayment) && (
                 <motion.div key="step4" className="space-y-4">
                     <div>
@@ -354,17 +363,19 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                             </motion.div>
                         )}
                     </div>
+
                 </motion.div>
             )}
+            {/*}
             {methodPayment && (
                 <div className="flex flex-col items-center text-center gap-6">
 
-                    {/* Título */}
+                    {/* Título */}{/*}
                     <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
                         Pagamento via PIX
                     </h2>
 
-                    {/* QR Code */}
+                    {/* QR Code */}{/*}
                     <div className="p-4 bg-white rounded-2xl shadow-lg shadow-black/20">
                         <img
                             src={`data:image/png;base64,${methodPayment.qr_code_base64}`}
@@ -373,7 +384,7 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                         />
                     </div>
 
-                    {/* Código PIX */}
+                    {/* Código PIX */}{/*}
                     <div className="w-full">
                         <textarea
                             readOnly
@@ -386,7 +397,7 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                             rows={4}
                         />
 
-                        {/* Botão copiar */}
+                        {/* Botão copiar */}{/*}
                         <div className='flex gap-5'>
                             <button
                                 type={'button'}
@@ -486,14 +497,50 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
                     </div>
                 </div>
             )}
+            {threeDSData && (
+                <StatusScreen
+                    initialization={{
+                        paymentId: threeDSData.id,
+
+                        additionalInfo: {
+                            externalResourceURL:
+                                threeDSData.three_ds_info.external_resource_url,
+
+                            creq:
+                                threeDSData.three_ds_info.creq,
+                        },
+                    }}
+
+                    onReady={() => {
+                        console.log("3DS Status Screen pronto");
+                    }}
+
+                    onError={(error) => {
+                        console.error("Erro no 3DS:", error);
+                    }}
+                />
+            )}
+                {*/}
             {(!methodPayment && paymentVisible) && (
+                /*
                 <Payment
                     initialization={initialization}
                     customization={customization}
                     onSubmit={onSubmit}
                     onReady={onReady}
                     onError={onError}
-                />)}
+                /> */
+                <div>
+                    <Link target='_blank' href="https://wa.me/5511963160300?text=Oi%20Isabella%2C%0A%0AQuero%20falar%20sobre%20como%20pagar%20o%20Mochileiros">
+                        <Button
+                            type={'button'}
+                            extraClass={'opacity-100 cursor-pointer hover:opacity-90 active:opacity-80'}
+                        >
+                            Chame no Whatsapp para finalizar o pagamento
+                        </Button>
+                    </Link>
+                </div>
+            )}
             <Button
                 type={'button'}
                 onClick={prevStep}
@@ -501,6 +548,7 @@ export default function Steap4({ prevStep, setStatus, setStep, register, errors,
             >
                 Voltar
             </Button>
+
         </>
     )
 }

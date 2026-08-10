@@ -50,7 +50,7 @@ export async function PUT(req) {
 
         const body = await req.json()
 
-        console.log(body)
+        //console.log("Criação:" + body)
 
         await prisma.ticket.update({
 
