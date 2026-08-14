@@ -3,7 +3,24 @@
 import prisma from "@/lib/prisma"
 
 export async function GET() {
-    const tickets = await prisma.ticket.findMany()
+    const tickets = await prisma.ticket.findMany({
+      select: {
+          name: true,
+          email: true,
+          phone: true,
+          document: true,
+          birth: true,
+          cep: true,
+          street: true,
+          number: true,
+          district: true,
+          city: true,
+          rg: true,
+          useMedication: true,
+          healthProblem: true,
+          foodRestriction: true,
+  },
+})
 
     if (!tickets.length) {
         return new Response('Nenhum registro encontrado', { status: 404 })
