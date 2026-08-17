@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { redirect } from 'next/navigation'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +22,9 @@ import Steap5 from "./components/step5";
 
 
 export default function CheckoutPage() {
+
+    redirect('/')
+
     const [step, setStep] = useState(1);
     const [status, setStatus] = useState("");
 

@@ -237,11 +237,15 @@ function Countdown({ eventDate }) {
           </div>
         </section>
 
-        <section id="inscricao" className="bg-[#1A1A1A] px-6 py-28">
+        <section
+          id="inscricao"
+          className="relative overflow-hidden bg-[#1A1A1A] px-6 py-28"
+        >
           <div className="mx-auto max-w-6xl text-center">
             <span className="text-sm font-semibold uppercase tracking-[0.3em] text-[#2EC4B6]">
               Inscrição
             </span>
+
             <h2 className="mt-4 text-4xl font-black md:text-5xl">
               Escolha Seu Lote
             </h2>
@@ -260,7 +264,7 @@ function Countdown({ eventDate }) {
                 date="05 de julho"
                 price="R$ 300,00"
                 spots="25 vagas"
-                featured
+                canceled
               />
 
               <LotCard
@@ -268,7 +272,7 @@ function Countdown({ eventDate }) {
                 date="15 de agosto"
                 price="R$ 350,00"
                 spots="10 vagas"
-                blurred
+                canceled
               />
             </div>
 
@@ -278,6 +282,19 @@ function Countdown({ eventDate }) {
             >
               Fazer Inscrição
             </Link>
+          </div>
+
+          {/* SOBREPOSIÇÃO */}
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md">
+            <div className="flex flex-col items-center text-center">
+              <span className="rounded-full border border-[#FF7A18]/40 bg-[#FF7A18]/10 px-8 py-4 text-lg font-black uppercase tracking-[0.25em] text-[#FF7A18]">
+                Inscrições esgotadas
+              </span>
+
+              <p className="mt-5 max-w-md text-base font-medium text-white/60">
+                As inscrições para o Mochileiros foram encerradas.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -327,6 +344,8 @@ function CountdownCard({ value, label }) {
 }
 
 function LotCard({ title, date, price, spots, featured, blurred, canceled }) {
+  const soldOut = spots === 'Inscrições esgotadas'
+
   return (
     <div
       className={`relative overflow-hidden rounded-[2rem] border p-8 text-left shadow-2xl transition ${featured
@@ -358,6 +377,7 @@ function LotCard({ title, date, price, spots, featured, blurred, canceled }) {
 
         <div className="flex items-center justify-between">
           <h3 className="text-2xl font-black text-white">{title}</h3>
+
           {featured && (
             <span className="rounded-full bg-[#FF7A18]/15 px-4 py-2 text-xs font-bold uppercase tracking-[0.3em] text-[#FF7A18]">
               Disponível
@@ -367,21 +387,48 @@ function LotCard({ title, date, price, spots, featured, blurred, canceled }) {
 
         <div className="mt-8 space-y-6">
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">Término do lote</p>
-            <p className="mt-2 text-xl font-bold text-[#CFCFCF]">{date}</p>
+            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">
+              Término do lote
+            </p>
+            <p className="mt-2 text-xl font-bold text-[#CFCFCF]">
+              {date}
+            </p>
           </div>
 
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">Valor</p>
-            <p className="mt-2 text-3xl font-black text-[#2EC4B6]">{price}</p>
+            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">
+              Valor
+            </p>
+            <p className="mt-2 text-3xl font-black text-[#2EC4B6]">
+              {price}
+            </p>
           </div>
 
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">Quantidade</p>
-            <p className="mt-2 text-xl font-bold text-[#CFCFCF]">{spots}</p>
+            <p className="text-sm uppercase tracking-[0.2em] text-[#8A8A8A]">
+              Quantidade
+            </p>
+            <p className="mt-2 text-xl font-bold text-[#CFCFCF]">
+              {spots}
+            </p>
           </div>
         </div>
       </div>
+
+      {/* Inscrições esgotadas */}
+      {soldOut && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/70 backdrop-blur-[3px]">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <span className="rounded-full border border-[#FF7A18]/40 bg-[#FF7A18]/10 px-6 py-3 text-sm font-black uppercase tracking-[0.25em] text-[#FF7A18]">
+              Inscrições esgotadas
+            </span>
+
+            <p className="max-w-xs text-sm font-medium text-white/60">
+              Este lote não possui mais vagas disponíveis.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
